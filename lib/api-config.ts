@@ -21,8 +21,9 @@ const getApiBaseUrl = (): string => {
     return '/api';
   }
   
-  // Server-side environment - default to localhost for development
-  return 'http://localhost:8000';
+  // Server-side environment with no explicit backend URL:
+  // Use relative base to hit Next.js route handlers (proxy) instead of hardcoding any URL
+  return '';
 };
 
 // Create axios instance with centralized configuration
@@ -35,13 +36,25 @@ export const apiClient = axios.create({
   },
 });
 
-// Request interceptor for adding auth tokens/headers
+// Request interceptor for adding auth tokens/headers and enforcing /api prefix
 apiClient.interceptors.request.use(
   (config) => {
     // Add API key if available
     const apiKey = process.env.NEXT_PUBLIC_API_KEY;
     if (apiKey && config.headers) {
       config.headers['X-API-Key'] = apiKey;
+    }
+    
+    // Ensure all relative endpoints include /api prefix unless exempt
+    const rawUrl = config.url || '';
+    const isAbsolute = /^https?:\/\//i.test(rawUrl);
+    if (!isAbsolute) {
+      let nextUrl = rawUrl.startsWith('/') ? rawUrl : `/${rawUrl}`;
+      const exemptPaths = ['/health']; // do not prefix these
+      if (!nextUrl.startsWith('/api/') && !exemptPaths.includes(nextUrl)) {
+        nextUrl = `/api${nextUrl}`;
+      }
+      config.url = nextUrl;
     }
     
     // Log request in development

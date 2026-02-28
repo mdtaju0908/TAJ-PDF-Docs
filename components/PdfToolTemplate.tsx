@@ -93,7 +93,7 @@ export function PdfToolTemplate({ toolId }: PdfToolTemplateProps) {
     setProcessing(true, 0);
 
     try {
-      const { data } = await apiClient.post(`/${toolId}`, formData, {
+      const { data } = await apiClient.post(`${toolId}`, formData, {
         headers: { "Content-Type": "multipart/form-data" }
       });
       const url: string | undefined = data?.download_url ?? data?.fileUrl ?? data?.url;

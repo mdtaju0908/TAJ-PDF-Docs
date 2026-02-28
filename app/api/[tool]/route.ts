@@ -5,7 +5,13 @@ export const runtime = "nodejs";
 export async function POST(req: Request, { params }: { params: { tool: string } }) {
   const formData = await req.formData();
   const apiKey = process.env.NEXT_PUBLIC_API_KEY ?? "";
-  const base = process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
+  const base = process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_BACKEND_URL || "";
+  if (!base) {
+    return NextResponse.json(
+      { success: false, message: "Backend URL not configured (NEXT_PUBLIC_API_URL)" },
+      { status: 500 }
+    );
+  }
   const url = `${base}/api/${params.tool}`;
   try {
     console.debug("Forwarding request to", url, "tool", params.tool);
