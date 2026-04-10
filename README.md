@@ -31,4 +31,5 @@
 ---
 ### 📄 License
 
-**This project is licensed under the MIT License.**
+All Rights Reserved
+Copyright (c) 2026 Md Taju
