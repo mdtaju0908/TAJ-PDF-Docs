@@ -19,16 +19,9 @@ export function Navbar() {
   return (
     <header className="sticky top-0 z-40 border-b border-slate-100 bg-white/80 backdrop-blur-xl">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 md:px-6 lg:px-8">
-        <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-gradient-to-tr from-rose-500 via-red-500 to-orange-400 text-white shadow-md">
-            <span className="text-lg font-semibold">T</span>
-          </div>
-          <div>
-            <Link href="/" className="block text-sm font-semibold tracking-tight">
-              TAJ PDF Docs
-            </Link>
-          </div>
-        </div>
+        <Link href="/" className="flex items-center gap-3">
+          <img src="/logo.svg" alt="TAJ PDF Docs" className="h-10 w-auto" />
+        </Link>
 
         <nav className="hidden items-center gap-6 text-sm font-medium text-slate-600 md:flex">
           {mainLinks.map(link => (

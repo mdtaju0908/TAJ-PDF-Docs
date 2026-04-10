@@ -1,0 +1,20 @@
+<svg width="240" height="60" viewBox="0 0 240 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="logoGrad" x1="0" y1="0" x2="240" y2="60" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#E11D48"/>
+      <stop offset="0.5" stop-color="#F43F5E"/>
+      <stop offset="1" stop-color="#FB923C"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Icon: Prominent and Bold -->
+  <rect x="2" y="6" width="48" height="48" rx="14" fill="url(#logoGrad)"/>
+  <path d="M14 20H38" stroke="white" stroke-width="4.5" stroke-linecap="round"/>
+  <path d="M14 32H38" stroke="white" stroke-width="4.5" stroke-linecap="round"/>
+  <path d="M14 44H26" stroke="white" stroke-width="4.5" stroke-linecap="round"/>
+  <path d="M21 15L26 11L31 15" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Text: Maximum Boldness and Size -->
+  <text x="58" y="34" fill="#0F172A" font-family="Inter, system-ui, sans-serif" font-weight="900" font-size="30" letter-spacing="-0.04em">TAJ PDF</text>
+  <text x="58" y="54" fill="#64748B" font-family="Inter, system-ui, sans-serif" font-weight="800" font-size="18" letter-spacing="0.12em">DOCS</text>
+</svg>

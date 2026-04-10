@@ -68,11 +68,6 @@ export function ToolCard({ toolId }: ToolCardProps) {
   if (!tool) return null;
   const Icon = iconMap[tool.id];
   if (!Icon) return null;
-  const favorites = useAppStore(s => s.favorites);
-  const addFavorite = useAppStore(s => s.addFavorite);
-  const removeFavorite = useAppStore(s => s.removeFavorite);
-  const isFav = favorites.includes(toolId);
-
   return (
     <Link href={`/tools/${tool.id}`} className="group block focus:outline-none">
       <div
@@ -82,32 +77,13 @@ export function ToolCard({ toolId }: ToolCardProps) {
         )}
       >
         <div className="relative flex flex-col">
-          <button
-            type="button"
-            aria-label={isFav ? "Remove favorite" : "Add favorite"}
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              isFav ? removeFavorite(toolId) : addFavorite(toolId);
-            }}
-            className={cn(
-              "absolute right-2 top-2 rounded-full border px-2 py-1 text-xs transition",
-              isFav ? "border-amber-300 bg-amber-50 text-amber-700" : "border-slate-200 bg-white text-slate-600"
-            )}
-          >
-            {isFav ? "★" : "☆"}
-          </button>
-          <div
-            className={cn(
-              "flex h-14 w-14 items-center justify-center rounded-xl",
-              tool.iconBg ?? "",
-              !tool.iconBg && tool.color
-            )}
-          >
-            <Icon size={22} className={tool.iconColor} />
+          <div className="mb-4 flex items-center justify-between">
+            <div className="rounded-xl bg-white/40 p-2.5 backdrop-blur-sm group-hover:bg-white/60">
+              <Icon className="h-6 w-6 text-slate-800" strokeWidth={1.5} />
+            </div>
           </div>
-          <h3 className="mt-4 font-semibold text-gray-800">{tool.title}</h3>
-          <p className="mt-1 text-sm text-gray-500">{tool.description}</p>
+          <h3 className="font-semibold text-slate-900">{tool.title}</h3>
+          <p className="mt-1 text-xs text-slate-600 line-clamp-2">{tool.description}</p>
         </div>
       </div>
     </Link>

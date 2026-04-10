@@ -19,7 +19,20 @@ export const metadata: Metadata = {
     title: "TAJ PDF Docs – All-in-One PDF Tools Platform",
     description:
       "Merge, split, compress and convert PDFs in seconds. Built for product, legal and finance teams.",
-    type: "website"
+    type: "website",
+    images: [
+      {
+        url: "/logo.svg",
+        width: 240,
+        height: 60,
+        alt: "TAJ PDF Docs Logo"
+      }
+    ]
+  },
+  icons: {
+    icon: "/favicon.svg",
+    apple: "/favicon.svg",
+    shortcut: "/favicon.svg"
   }
 };
 

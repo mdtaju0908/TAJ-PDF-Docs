@@ -11,11 +11,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/features",
     "/security",
     "/help",
-    "/about",
-    "/dashboard",
-    "/dashboard/recent",
-    "/dashboard/favorites",
-    "/dashboard/security"
+    "/about"
   ];
 
   const entries: MetadataRoute.Sitemap = [
