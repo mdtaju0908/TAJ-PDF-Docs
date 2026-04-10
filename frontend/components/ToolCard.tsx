@@ -6,6 +6,7 @@ import {
   Camera,
   Combine,
   Crop,
+  Eraser,
   Eye,
   FileArchive,
   FileImage,
@@ -56,7 +57,8 @@ const iconMap: Record<PdfToolId, LucideIcon> = {
   unlock: Unlock,
   protect: Lock,
   organize: Layers,
-  "pdf-a": FileArchive
+  "pdf-a": FileArchive,
+  "bg-remover": Eraser
 };
 
 interface ToolCardProps {
@@ -73,13 +75,16 @@ export function ToolCard({ toolId }: ToolCardProps) {
       <div
         className={cn(
           "h-full cursor-pointer rounded-2xl p-6 shadow-sm transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:shadow-md",
-          tool.cardBg ?? tool.cardColor
+          tool.cardBg ?? "bg-white"
         )}
       >
         <div className="relative flex flex-col">
           <div className="mb-4 flex items-center justify-between">
-            <div className="rounded-xl bg-white/40 p-2.5 backdrop-blur-sm group-hover:bg-white/60">
-              <Icon className="h-6 w-6 text-slate-800" strokeWidth={1.5} />
+            <div className={cn(
+              "rounded-xl p-2.5 backdrop-blur-sm transition-colors",
+              tool.iconBg ?? "bg-white/40 group-hover:bg-white/60"
+            )}>
+              <Icon className={cn("h-6 w-6", tool.iconColor ?? "text-slate-800")} strokeWidth={2} />
             </div>
           </div>
           <h3 className="font-semibold text-slate-900">{tool.title}</h3>

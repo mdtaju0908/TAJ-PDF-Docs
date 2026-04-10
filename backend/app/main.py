@@ -22,6 +22,7 @@ from app.api.routes.convert import router as convert_router
 from app.api.routes.edit import router as edit_router
 from app.api.routes.ocr import router as ocr_router
 from app.api.routes.tools import router as tools_router
+from app.api.routes.bg_remover import router as bg_remover_router
 
 app = FastAPI(
     title="Smart PDF Tools Backend",
@@ -39,9 +40,7 @@ logger = logging.getLogger("smart-pdf-backend")
 # CORS for Next.js frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "https://taj-pdf-docs.vercel.app"
-    ],
+    allow_origins=settings.ALLOWED_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -69,7 +68,18 @@ app.include_router(
 app.include_router(
     tools_router, prefix="/api", tags=["tools"], dependencies=[verify_api_key, get_rate_limiter()]
 )
+app.include_router(
+    bg_remover_router, prefix="/api", tags=["bg-remover"], dependencies=[verify_api_key, get_rate_limiter()]
+)
 
+
+@app.get("/", tags=["system"])
+async def root() -> JSONResponse:
+    return JSONResponse({
+        "message": "TAJ PDF Docs API is running",
+        "status": "online",
+        "documentation": "/docs"
+    })
 
 @app.get("/health", tags=["system"])
 async def health() -> JSONResponse:

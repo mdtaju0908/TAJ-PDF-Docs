@@ -4,6 +4,7 @@ import "./globals.css";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Toaster } from "sonner";
+import { ProcessingOverlay } from "@/components/ProcessingOverlay";
 
 const inter = Inter({ subsets: ["latin"], display: "swap", variable: "--font-inter" });
 
@@ -48,6 +49,7 @@ export default function RootLayout({
         <main className="min-h-[70vh]">{children}</main>
         <Footer />
         <Toaster richColors position="top-right" />
+        <ProcessingOverlay />
       </body>
     </html>
   );

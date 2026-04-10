@@ -32,11 +32,11 @@ export function PdfToolTemplate({ toolId }: PdfToolTemplateProps) {
   const setUploadedFiles = useAppStore(s => s.setUploadedFiles);
   const setProcessing = useAppStore(s => s.setProcessing);
   const processingState = useAppStore(s => s.processingState);
-  const addRecentFile = useAppStore(s => s.addRecentFile);
   const [resultUrl, setResultUrl] = useState<string | null>(null);
   const [orientation, setOrientation] = useState<"portrait" | "landscape">("portrait");
   const [pageSize, setPageSize] = useState<string>("A4 (297x210 mm)");
   const [margin, setMargin] = useState<"none" | "small" | "big">("small");
+  const [backgroundColor, setBackgroundColor] = useState("#ffffff");
   const [mergeAll, setMergeAll] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -88,28 +88,61 @@ export function PdfToolTemplate({ toolId }: PdfToolTemplateProps) {
     formData.append("orientation", orientation);
     formData.append("pageSize", pageSize);
     formData.append("margin", margin);
+    formData.append("backgroundColor", backgroundColor);
     formData.append("mergeAll", String(mergeAll));
 
-    setProcessing(true, 0);
+    const startTime = Date.now();
+
+    setProcessing(true, {
+      progress: 0,
+      totalFiles: files.length,
+      currentFileIndex: 1,
+      fileName: files[0].name,
+      fileSize: files[0].size,
+      uploadSpeed: 0,
+      timeLeft: 0
+    });
 
     try {
       const { data } = await apiClient.post(`${toolId}`, formData, {
-        headers: { "Content-Type": "multipart/form-data" }
+        headers: { "Content-Type": "multipart/form-data" },
+        onUploadProgress: (progressEvent) => {
+          if (progressEvent.total) {
+            const percent = (progressEvent.loaded / progressEvent.total) * 100;
+            const elapsed = (Date.now() - startTime) / 1000;
+            const speed = progressEvent.loaded / elapsed;
+            const remaining = progressEvent.total - progressEvent.loaded;
+            const time = speed > 0 ? remaining / speed : 0;
+            
+            // Estimate current file index based on cumulative size
+            let currentIdx = 1;
+            let currentFile = files[0];
+            let accSize = 0;
+            for (let i = 0; i < files.length; i++) {
+              accSize += files[i].size;
+              if (progressEvent.loaded <= accSize || i === files.length - 1) {
+                currentIdx = i + 1;
+                currentFile = files[i];
+                break;
+              }
+            }
+
+            setProcessing(true, {
+              progress: percent,
+              currentFileIndex: currentIdx,
+              fileName: currentFile.name,
+              fileSize: currentFile.size,
+              uploadSpeed: speed,
+              timeLeft: time
+            });
+          }
+        }
       });
       const url: string | undefined = data?.download_url ?? data?.fileUrl ?? data?.url;
       setResultUrl(url && typeof url === "string" && url.length > 0 ? url : null);
       setUploadedFiles([]); // reset UI files after success
-      setProcessing(false, 0); // ensure progress reset immediately
+      setProcessing(false, { progress: 0 }); // ensure progress reset immediately
       toast.success(`${tool.title} completed successfully.`);
-      files.forEach(f =>
-        addRecentFile({
-          name: f.name,
-          size: f.size,
-          type: f.type,
-          processedAt: Date.now(),
-          toolId
-        })
-      );
     } catch (error: any) {
       const message =
         typeof error === "string"
@@ -117,7 +150,7 @@ export function PdfToolTemplate({ toolId }: PdfToolTemplateProps) {
           : error?.message ?? `Unable to complete ${tool.title}.`;
       toast.error(message);
     } finally {
-      setProcessing(false, 0);
+      setProcessing(false, { progress: 0 });
     }
   }
 
@@ -272,6 +305,26 @@ export function PdfToolTemplate({ toolId }: PdfToolTemplateProps) {
                     >
                       Big
                     </button>
+                  </div>
+                </div>
+              )}
+              {tool.allowBackgroundColor && (
+                <div className="space-y-2 text-xs">
+                  <h4 className="font-medium text-slate-800">Custom Background Color</h4>
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="color"
+                      value={backgroundColor}
+                      onChange={(e) => setBackgroundColor(e.target.value)}
+                      className="h-8 w-12 cursor-pointer rounded border border-slate-200"
+                    />
+                    <input
+                      type="text"
+                      value={backgroundColor}
+                      onChange={(e) => setBackgroundColor(e.target.value)}
+                      className="flex-1 rounded-lg border border-slate-200 p-2 text-xs outline-none focus:border-indigo-400"
+                      placeholder="#ffffff"
+                    />
                   </div>
                 </div>
               )}

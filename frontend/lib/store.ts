@@ -18,6 +18,12 @@ export interface UsageStats {
 export interface ProcessingState {
   isProcessing: boolean;
   progress: number;
+  totalFiles?: number;
+  currentFileIndex?: number;
+  fileName?: string;
+  fileSize?: number;
+  uploadSpeed?: number;
+  timeLeft?: number;
 }
 
 interface AppStore {
@@ -35,7 +41,7 @@ interface AppStore {
   login: (user: User, token: string | null) => void;
   logout: () => void;
   clearFiles: () => void;
-  setProcessing: (isProcessing: boolean, progress?: number) => void;
+  setProcessing: (isProcessing: boolean, state?: Partial<Omit<ProcessingState, 'isProcessing'>>) => void;
   setUploadedFiles: (files: File[]) => void;
   updateSecuritySettings: (retentionDays: number, restrictedAccess: boolean) => void;
 }
@@ -75,9 +81,14 @@ export const useAppStore = create<AppStore>((set) => ({
 
   clearFiles: () => set(() => ({ uploadedFiles: [] })),
 
-  setProcessing: (isProcessing, progress = 0) =>
-    set(() => ({
-      processingState: { isProcessing, progress }
+  setProcessing: (isProcessing, state = {}) =>
+    set((prev) => ({
+      processingState: { 
+        ...prev.processingState,
+        ...state,
+        isProcessing,
+        progress: state.progress ?? (isProcessing ? prev.processingState.progress : 0)
+      }
     })),
 
   setUploadedFiles: (files) => set(() => ({ uploadedFiles: files }))

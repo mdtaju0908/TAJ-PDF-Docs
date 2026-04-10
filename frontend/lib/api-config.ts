@@ -17,8 +17,8 @@ const getApiBaseUrl = (): string => {
   
   // Priority 3: Default based on environment
   if (typeof window !== 'undefined') {
-    // Browser environment - use relative path for same-origin requests
-    return '/api';
+    // Browser environment - base is empty because we use interceptor to add /api
+    return '';
   }
   
   // Server-side environment with no explicit backend URL:
