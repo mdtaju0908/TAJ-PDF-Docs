@@ -10,14 +10,14 @@
 
 @layer utilities {
   .hero-gradient {
-    @apply bg-gradient-to-b from-slate-50 via-slate-50 to-slate-100;
+    @apply bg-gradient-to-b from-slate-50 via-slate-50 to-slate-100 dark:from-slate-950 dark:via-slate-950 dark:to-slate-900;
   }
 
   .glass-panel {
-    @apply bg-white/80 backdrop-blur-xl;
+    @apply bg-white/80 backdrop-blur-xl dark:bg-slate-900/80;
   }
 
   .shadow-soft {
-    @apply shadow-[0_18px_45px_rgba(15,23,42,0.08)];
+    @apply shadow-[0_18px_45px_rgba(15,23,42,0.08)] dark:shadow-[0_18px_45px_rgba(0,0,0,0.3)];
   }
 }
