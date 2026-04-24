@@ -4,17 +4,18 @@ import { PdfToolTemplate } from "@/components/PdfToolTemplate";
 import { TOOL_DEFINITIONS, type PdfToolId } from "@/lib/tools";
 
 interface ToolPageProps {
-  params: {
+  params: Promise<{
     tool: PdfToolId;
-  };
+  }>;
 }
 
 export function generateStaticParams() {
   return TOOL_DEFINITIONS.map(tool => ({ tool: tool.id }));
 }
 
-export function generateMetadata({ params }: ToolPageProps): Metadata {
-  const tool = TOOL_DEFINITIONS.find(t => t.id === params.tool);
+export async function generateMetadata({ params }: ToolPageProps): Promise<Metadata> {
+  const { tool: toolId } = await params;
+  const tool = TOOL_DEFINITIONS.find(t => t.id === toolId);
   if (!tool) {
     return {
       title: "PDF tool not found"
@@ -27,12 +28,12 @@ export function generateMetadata({ params }: ToolPageProps): Metadata {
   };
 }
 
-export default function ToolPage({ params }: ToolPageProps) {
-  const tool = TOOL_DEFINITIONS.find(t => t.id === params.tool);
+export default async function ToolPage({ params }: ToolPageProps) {
+  const { tool: toolId } = await params;
+  const tool = TOOL_DEFINITIONS.find(t => t.id === toolId);
   if (!tool) {
     notFound();
   }
 
   return <PdfToolTemplate toolId={tool.id} />;
 }
-
