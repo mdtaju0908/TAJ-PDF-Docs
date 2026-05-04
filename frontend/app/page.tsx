@@ -27,10 +27,12 @@ export default function HomePage() {
               <Button
                 size="lg"
                 className="h-12 rounded-xl bg-gradient-to-r from-rose-500 to-orange-500 px-7 text-base font-semibold text-white shadow-lg shadow-rose-500/25 transition hover:scale-[1.02] hover:from-rose-600 hover:to-orange-600"
-              >
-                Select PDF Document
+              > Select PDF Document
               </Button>
             </a>
+            <span className="rounded-full border border-violet-300 bg-violet-100 px-3 py-1 text-xs font-medium text-violet-700 dark:border-violet-400/40 dark:bg-violet-500/10 dark:text-violet-200">
+                No Login Required
+              </span>
           </div>
         </div>
         <div className="flex-1">
@@ -126,9 +128,9 @@ export default function HomePage() {
       </section>
 
       <section className="mx-auto max-w-6xl space-y-6 px-4 pb-12 md:px-6 lg:px-8">
-        <div className="relative overflow-hidden rounded-3xl border border-sky-100 bg-gradient-to-r from-sky-50 via-white to-indigo-50 p-6 shadow-soft md:p-8">
-          <div className="pointer-events-none absolute -right-12 -top-12 h-36 w-36 rounded-full bg-sky-200/40 blur-2xl" />
-          <p className="text-xs font-semibold uppercase tracking-wide text-sky-600">
+        <div className="relative overflow-hidden rounded-3xl border border-sky-100 bg-gradient-to-r from-sky-50 via-white to-indigo-50 p-6 shadow-soft md:p-8 dark:border-sky-900/50 dark:from-sky-950/40 dark:via-slate-900 dark:to-indigo-950/40">
+          <div className="pointer-events-none absolute -right-12 -top-12 h-36 w-36 rounded-full bg-sky-200/40 blur-2xl dark:bg-sky-900/20" />
+          <p className="text-xs font-semibold uppercase tracking-wide text-sky-600 dark:text-sky-400">
             Productivity Card
           </p>
           <h2 className="mt-2 text-xl font-semibold tracking-tight text-slate-900 md:text-2xl dark:text-slate-100">

@@ -7,12 +7,12 @@ export function Footer() {
   const mobileTopTools = topTools.slice(0, 3);
 
   return (
-    <footer className="relative mt-10 overflow-hidden border-t border-slate-700 bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900">
+    <footer className="relative mt-10 w-full overflow-hidden border-t border-slate-700 bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900">
       <div className="pointer-events-none absolute -left-24 -top-20 h-64 w-64 rounded-full bg-violet-500/20 blur-3xl" />
       <div className="pointer-events-none absolute -right-20 top-8 h-52 w-52 rounded-full bg-cyan-400/20 blur-3xl" />
 
-      <div className="relative mx-auto max-w-6xl px-4 py-7 md:px-6 lg:px-8">
-        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+      <div className="relative w-full px-4 py-8 md:px-6 md:py-10 lg:px-10 lg:py-12">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
           <div className="space-y-3 lg:col-span-2">
             <Link href="/" className="inline-flex items-center gap-3">
               <img src="/logo.svg" alt="TAJ PDF Docs" className="h-9 w-auto invert" />
@@ -22,15 +22,16 @@ export function Footer() {
               Merge, split, compress and convert documents in seconds.
             </p>
             <div className="flex flex-wrap gap-2">
-              <span className="rounded-full border border-violet-400/40 bg-violet-500/10 px-3 py-1 text-xs font-medium text-violet-200">
-                No Login Required
-              </span>
               <span className="rounded-full border border-emerald-400/40 bg-emerald-500/10 px-3 py-1 text-xs font-medium text-emerald-200">
                 Secure Processing
               </span>
               <span className="rounded-full border border-cyan-400/40 bg-cyan-500/10 px-3 py-1 text-xs font-medium text-cyan-200">
                 Fast Downloads
               </span>
+              <div className="inline-flex items-center gap-2 rounded-full border border-rose-200 bg-rose-50 px-4 py-1.5 text-xs font-medium text-rose-700 shadow-sm dark:border-rose-900/50 dark:bg-rose-950/30 dark:text-rose-300">
+                <span className="h-2 w-2 rounded-full bg-emerald-500" />
+                <span>Developed by: Er. MD TAJU</span>
+              </div>
             </div>
           </div>
 
@@ -62,7 +63,7 @@ export function Footer() {
                 <Link
                   key={tool.id}
                   href={`/tools/${tool.id}`}
-                  className="group flex items-center justify-between rounded-xl border border-slate-700 bg-white/5 px-3 py-2 text-sm text-slate-200 transition hover:border-violet-400/40 hover:bg-violet-500/10 hover:text-white"
+                  className="group flex items-center justify-between rounded-xl border border-transparent px-3 py-2 text-sm text-slate-200 transition hover:border-violet-400/40 hover:text-white"
                 >
                   <span className="min-w-0 truncate">
                     <span className="mr-2 text-xs text-slate-400 group-hover:text-violet-200">
@@ -79,7 +80,7 @@ export function Footer() {
                 <Link
                   key={tool.id}
                   href={`/tools/${tool.id}`}
-                  className="group flex items-center justify-between rounded-xl border border-slate-700 bg-white/5 px-3 py-2 text-sm text-slate-200 transition hover:border-violet-400/40 hover:bg-violet-500/10 hover:text-white"
+                  className="group flex items-center justify-between rounded-xl border border-transparent px-3 py-2 text-sm text-slate-200 transition hover:border-violet-400/40 hover:text-white"
                 >
                   <span className="min-w-0 truncate">
                     <span className="mr-2 text-xs text-slate-400 group-hover:text-violet-200">
@@ -92,7 +93,7 @@ export function Footer() {
               ))}
               <Link
                 href="/#tools"
-                className="rounded-xl border border-slate-600 bg-white/5 px-3 py-2 text-center text-xs font-semibold uppercase tracking-wide text-slate-300 transition hover:border-violet-400/40 hover:text-white"
+                className="rounded-xl border border-transparent px-3 py-2 text-center text-xs font-semibold uppercase tracking-wide text-slate-300 transition hover:border-violet-400/40 hover:text-white"
               >
                 View All Tools
               </Link>
@@ -100,8 +101,10 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-5 rounded-2xl border border-slate-600 bg-white/10 p-3 text-xs text-slate-200 shadow-sm backdrop-blur-sm md:flex md:items-center md:justify-between">
-          <p>© {new Date().getFullYear()} TAJ PDF Docs. All rights reserved.</p>
+        <div className="mt-6 rounded-2xl border border-slate-600 bg-white/10 p-4 text-xs text-slate-200 shadow-sm backdrop-blur-sm md:mt-7 md:flex md:items-center md:justify-between">
+          <div className="space-y-1">
+            <p>&copy; {new Date().getFullYear()} TAJ PDF Docs. All rights reserved.</p>
+          </div>
           <div className="mt-3 flex flex-wrap items-center gap-4 md:mt-0">
             <Link href="/about" className="transition hover:text-white">
               About

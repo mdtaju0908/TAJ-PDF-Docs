@@ -212,15 +212,28 @@ export function PdfToolTemplate({ toolId }: PdfToolTemplateProps) {
   }
 
   return (
-    <div className="mx-auto flex max-w-5xl flex-col gap-6 px-4 py-8 md:px-6 lg:px-8">
-      <button
-        type="button"
-        onClick={() => router.push("/")}
-        className="mb-2 inline-flex w-max items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1 text-xs text-slate-600 shadow-sm transition hover:bg-slate-50"
-      >
-        <span>←</span>
-        <span>Back to all tools</span>
-      </button>
+    <div className="flex w-full flex-col gap-6 px-4 py-8 md:px-6 lg:px-10">
+      <div className="mb-2 flex flex-wrap items-center gap-2 sm:gap-3">
+        <button
+          type="button"
+          onClick={() => router.push("/#tools")}
+          className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 shadow-sm transition hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800"
+        >
+          <span aria-hidden>←</span>
+          <span>Back to all tools</span>
+        </button>
+        <div className="flex flex-wrap items-center justify-end gap-2 sm:ml-auto">
+          {panelToolPaths.map(item => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="inline-flex items-center rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-medium text-slate-600 transition hover:border-indigo-200 hover:text-indigo-700 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-400 dark:hover:border-indigo-900 dark:hover:text-indigo-300"
+            >
+              {item.label}
+            </Link>
+          ))}
+        </div>
+      </div>
       <div className="space-y-6">
         <div className="space-y-2">
           <h1 className="text-2xl font-semibold tracking-tight text-slate-900 md:text-3xl dark:text-slate-100">
@@ -236,7 +249,7 @@ export function PdfToolTemplate({ toolId }: PdfToolTemplateProps) {
               : "grid-cols-1"
           )}
         >
-          <div className={cn("space-y-4", !hasFiles && "mx-auto w-full max-w-4xl")}>
+          <div className={cn("space-y-4", !hasFiles && "w-full")}>
             <UploadBox
               onFilesSelected={accepted => setUploadedFiles([...(files ?? []), ...accepted])}
               accept={tool.accept}
