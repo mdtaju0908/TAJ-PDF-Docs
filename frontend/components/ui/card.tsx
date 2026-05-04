@@ -60,4 +60,3 @@ export function CardContent({
     <div className={cn("space-y-3 text-sm text-slate-600 dark:text-slate-400", className)} {...props} />
   );
 }
-

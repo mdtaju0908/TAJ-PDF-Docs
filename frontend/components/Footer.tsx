@@ -11,8 +11,8 @@ export function Footer() {
       <div className="pointer-events-none absolute -left-24 -top-20 h-64 w-64 rounded-full bg-violet-500/20 blur-3xl" />
       <div className="pointer-events-none absolute -right-20 top-8 h-52 w-52 rounded-full bg-cyan-400/20 blur-3xl" />
 
-      <div className="relative mx-auto w-full max-w-[1380px] px-4 py-8 md:px-8 lg:px-12">
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+      <div className="relative mx-auto max-w-6xl px-4 py-7 md:px-6 lg:px-8">
+        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
           <div className="space-y-3 lg:col-span-2">
             <Link href="/" className="inline-flex items-center gap-3">
               <img src="/logo.svg" alt="TAJ PDF Docs" className="h-9 w-auto invert" />
@@ -100,12 +100,9 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-6 rounded-2xl border border-slate-600 bg-white/10 p-4 text-xs text-slate-200 shadow-sm backdrop-blur-sm md:flex md:items-center md:justify-between">
-          <div className="space-y-1">
-            <p>© {new Date().getFullYear()} TAJ PDF Docs. All rights reserved.</p>
-            <p className="text-slate-300">Developed by: Er. MD TAJU</p>
-          </div>
-          <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 md:mt-0 md:justify-end">
+        <div className="mt-5 rounded-2xl border border-slate-600 bg-white/10 p-3 text-xs text-slate-200 shadow-sm backdrop-blur-sm md:flex md:items-center md:justify-between">
+          <p>© {new Date().getFullYear()} TAJ PDF Docs. All rights reserved.</p>
+          <div className="mt-3 flex flex-wrap items-center gap-4 md:mt-0">
             <Link href="/about" className="transition hover:text-white">
               About
             </Link>

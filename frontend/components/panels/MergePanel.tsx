@@ -56,4 +56,3 @@ export function MergePanel({ files, mergeAll, onMergeAllChange }: MergePanelProp
     </div>
   );
 }
-

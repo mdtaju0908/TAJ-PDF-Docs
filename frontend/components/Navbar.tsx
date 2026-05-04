@@ -49,15 +49,15 @@ export function Navbar() {
   }, []);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-slate-100 bg-white/80 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-950/80">
-      <div className="flex w-full items-center justify-between px-4 py-3 md:px-6 lg:px-10">
+    <header className="sticky top-0 z-40 border-b border-slate-100 bg-white/80 backdrop-blur-xl">
+      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 md:px-6 lg:px-8">
         <Link href="/" className="flex items-center gap-3">
           <img src="/logo.svg" alt="TAJ PDF Docs" className="h-9 w-auto sm:h-10 dark:invert" />
         </Link>
 
         <nav
           ref={desktopNavRef}
-          className="ml-auto hidden items-center gap-7 text-sm font-semibold tracking-wide text-slate-900 lg:flex dark:text-slate-100"
+          className="hidden items-center gap-7 text-sm font-semibold tracking-wide text-slate-900 md:flex"
         >
           {primaryLinks.map(link => (
             <Link
@@ -138,6 +138,8 @@ export function Navbar() {
           <ThemeToggle />
         </nav>
 
+        <div className="hidden items-center gap-3 md:flex"></div>
+
         <button
           type="button"
           className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800 lg:hidden"
@@ -153,8 +155,8 @@ export function Navbar() {
       </div>
 
       {open && (
-        <div className="border-t border-slate-100 bg-white dark:border-slate-800 dark:bg-slate-950 lg:hidden">
-          <div className="flex w-full flex-col gap-1 px-4 py-3 text-sm md:px-6 lg:px-10">
+        <div className="border-t border-slate-100 bg-white md:hidden">
+          <div className="mx-auto flex max-w-6xl flex-col gap-1 px-4 py-3 text-sm md:px-6 lg:px-8">
             {mobileLinks.map(link => (
               <Link
                 key={link.href}

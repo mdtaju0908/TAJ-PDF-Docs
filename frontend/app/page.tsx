@@ -85,15 +85,7 @@ export default function HomePage() {
         <ToolGrid />
       </section>
 
-      <section className="w-full space-y-6 px-4 pb-16 md:px-6 lg:px-10">
-        <div className="space-y-2">
-          <p className="text-xs font-semibold uppercase tracking-wide text-indigo-600 dark:text-indigo-400">
-            Why Choose Us
-          </p>
-          <h2 className="text-2xl font-semibold tracking-tight text-slate-900 md:text-3xl dark:text-slate-100">
-            Built for speed, trust, and productivity
-          </h2>
-        </div>
+      <section className="mx-auto max-w-6xl space-y-6 px-4 pb-16 md:px-6 lg:px-8">
         <div className="grid gap-5 md:grid-cols-2">
           <div className="relative overflow-hidden rounded-3xl border border-indigo-100 bg-gradient-to-br from-indigo-50 via-violet-50 to-white p-6 shadow-soft dark:border-indigo-900/50 dark:from-indigo-950/50 dark:via-slate-900 dark:to-slate-950">
             <div className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-indigo-200/40 blur-2xl dark:bg-indigo-900/20" />
@@ -133,10 +125,10 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="w-full space-y-6 px-4 pb-12 md:px-6 lg:px-10">
-        <div className="relative overflow-hidden rounded-3xl border border-sky-100 bg-gradient-to-r from-sky-50 via-white to-indigo-50 p-6 shadow-soft md:p-8 dark:border-sky-900/50 dark:from-sky-950/40 dark:via-slate-900 dark:to-indigo-950/40">
-          <div className="pointer-events-none absolute -right-12 -top-12 h-36 w-36 rounded-full bg-sky-200/40 blur-2xl dark:bg-sky-900/20" />
-          <p className="text-xs font-semibold uppercase tracking-wide text-sky-600 dark:text-sky-400">
+      <section className="mx-auto max-w-6xl space-y-6 px-4 pb-12 md:px-6 lg:px-8">
+        <div className="relative overflow-hidden rounded-3xl border border-sky-100 bg-gradient-to-r from-sky-50 via-white to-indigo-50 p-6 shadow-soft md:p-8">
+          <div className="pointer-events-none absolute -right-12 -top-12 h-36 w-36 rounded-full bg-sky-200/40 blur-2xl" />
+          <p className="text-xs font-semibold uppercase tracking-wide text-sky-600">
             Productivity Card
           </p>
           <h2 className="mt-2 text-xl font-semibold tracking-tight text-slate-900 md:text-2xl dark:text-slate-100">
