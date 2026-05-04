@@ -8,6 +8,9 @@ export default function HomePage() {
       <section className="flex w-full flex-col gap-12 px-4 pb-14 pt-12 md:flex-row md:items-center md:px-6 lg:px-10 lg:pb-20 lg:pt-16">
         <div className="flex-1 space-y-7">
           <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-1.5 text-xs font-medium text-rose-600 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+            <span className="rounded-full border border-violet-300 bg-violet-100 px-3 py-1 text-xs font-medium text-violet-700 dark:border-violet-400/40 dark:bg-violet-500/10 dark:text-violet-200">
+                No Login Required
+              </span>
             <span className="h-2 w-2 rounded-full bg-emerald-500" />
             <span>Developed by: Er. MD TAJU</span>
           </div>
@@ -30,9 +33,6 @@ export default function HomePage() {
               > Select PDF Document
               </Button>
             </a>
-            <span className="rounded-full border border-violet-300 bg-violet-100 px-3 py-1 text-xs font-medium text-violet-700 dark:border-violet-400/40 dark:bg-violet-500/10 dark:text-violet-200">
-                No Login Required
-              </span>
           </div>
         </div>
         <div className="flex-1">
