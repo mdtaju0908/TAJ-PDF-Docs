@@ -73,28 +73,31 @@ export function ToolCard({ toolId }: ToolCardProps) {
     <Link href={`/tools/${tool.id}`} className="group block focus:outline-none">
       <div
         className={cn(
-          "h-full cursor-pointer overflow-hidden rounded-2xl border p-5 shadow-[0_10px_30px_-18px_rgba(15,23,42,0.35)] transition-all duration-300 ease-out",
+          "h-full cursor-pointer overflow-hidden rounded-2xl border p-4 shadow-[0_10px_30px_-18px_rgba(15,23,42,0.35)] transition-all duration-300 ease-out sm:p-5",
           "hover:-translate-y-1 hover:shadow-[0_16px_40px_-18px_rgba(79,70,229,0.35)]",
           "focus-visible:ring-2 focus-visible:ring-indigo-400/50",
           tool.borderColor ?? "border-slate-200",
-          tool.bgLight ?? "bg-white"
+          tool.bgLight ?? "bg-white",
+          "dark:border-slate-800 dark:bg-slate-900",
+          "dark:border-opacity-20 dark:hover:border-opacity-40"
         )}
       >
-        <div className={cn("mb-4 h-1 w-full rounded-full bg-gradient-to-r", tool.gradient)} />
+        <div className={cn("mb-3 h-1 w-full rounded-full bg-gradient-to-r sm:mb-4", tool.gradient)} />
         <div className="relative flex h-full flex-col">
-          <div className="mb-4 flex items-center justify-between">
+          <div className="mb-3 flex items-center justify-between sm:mb-4">
             <div
               className={cn(
-                "rounded-xl border border-slate-200/80 p-2.5 shadow-sm backdrop-blur-sm transition-all",
-                "ring-1 ring-white/70 group-hover:scale-105",
-                tool.iconBg ?? "bg-white/80"
+                "rounded-xl border border-slate-200/80 p-2 shadow-sm backdrop-blur-sm transition-all sm:p-2.5",
+                "ring-1 ring-white/70 group-hover:scale-105 dark:ring-slate-800/50",
+                tool.iconBg ?? "bg-white/80",
+                "dark:bg-slate-800/80"
               )}
             >
-              <Icon className={cn("h-6 w-6", tool.iconColor ?? "text-slate-800")} strokeWidth={2.3} />
+              <Icon className={cn("h-5 w-5 sm:h-6 sm:w-6", tool.iconColor ?? "text-slate-800 dark:text-slate-200")} strokeWidth={2.3} />
             </div>
           </div>
-          <h3 className="text-xl font-semibold tracking-tight text-slate-900">{tool.title}</h3>
-          <p className="mt-2 text-sm leading-6 text-slate-600 line-clamp-2">{tool.description}</p>
+          <h3 className="text-lg font-semibold tracking-tight text-slate-900 sm:text-xl dark:text-slate-100">{tool.title}</h3>
+          <p className="mt-2 line-clamp-2 text-sm leading-6 text-slate-600 dark:text-slate-400">{tool.description}</p>
         </div>
       </div>
     </Link>
@@ -109,7 +112,7 @@ export function ToolGrid({ limit }: ToolGridProps) {
   const tools = limit ? TOOL_DEFINITIONS.slice(0, limit) : TOOL_DEFINITIONS;
 
   return (
-    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+    <div className="grid auto-rows-fr grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 xl:grid-cols-4">
       {tools.map(tool => (
         <ToolCard key={tool.id} toolId={tool.id} />
       ))}

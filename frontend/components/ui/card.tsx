@@ -8,7 +8,7 @@ export function Card({
   return (
     <div
       className={cn(
-        "glass-panel card-hover rounded-2xl border border-slate-100 bg-white/90 p-6 shadow-soft",
+        "glass-panel card-hover rounded-2xl border border-slate-100 bg-white/90 p-6 shadow-soft dark:border-slate-800 dark:bg-slate-900/90",
         className
       )}
       {...props}
@@ -34,7 +34,7 @@ export function CardTitle({
 }: React.HTMLAttributes<HTMLHeadingElement>) {
   return (
     <h3
-      className={cn("text-base font-semibold text-slate-900", className)}
+      className={cn("text-base font-semibold text-slate-900 dark:text-slate-100", className)}
       {...props}
     />
   );
@@ -46,7 +46,7 @@ export function CardDescription({
 }: React.HTMLAttributes<HTMLParagraphElement>) {
   return (
     <p
-      className={cn("text-sm text-slate-500 leading-relaxed", className)}
+      className={cn("text-sm text-slate-500 dark:text-slate-400 leading-relaxed", className)}
       {...props}
     />
   );
@@ -57,7 +57,7 @@ export function CardContent({
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) {
   return (
-    <div className={cn("space-y-3 text-sm text-slate-600", className)} {...props} />
+    <div className={cn("space-y-3 text-sm text-slate-600 dark:text-slate-400", className)} {...props} />
   );
 }
 

@@ -11,10 +11,10 @@ const buttonVariants = cva(
         default:
           "bg-gradient-to-r from-rose-500 via-red-500 to-orange-400 text-white shadow-md hover:shadow-xl hover:brightness-105",
         outline:
-          "border border-slate-200 bg-white text-slate-900 shadow-sm hover:bg-slate-50 hover:shadow-md",
-        ghost: "text-slate-900 hover:bg-slate-100/80",
+          "border border-slate-200 bg-white text-slate-900 shadow-sm hover:bg-slate-50 hover:shadow-md dark:border-slate-800 dark:bg-slate-950 dark:text-slate-100 dark:hover:bg-slate-900",
+        ghost: "text-slate-900 hover:bg-slate-100/80 dark:text-slate-100 dark:hover:bg-slate-800/80",
         subtle:
-          "bg-slate-900 text-white hover:bg-slate-800 shadow-md hover:shadow-xl"
+          "bg-slate-900 text-white hover:bg-slate-800 shadow-md hover:shadow-xl dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200"
       },
       size: {
         default: "h-11 px-6",

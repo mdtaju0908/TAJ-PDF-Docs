@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { TOOL_DEFINITIONS, type PdfToolId, getToolDefinition } from "@/lib/tools";
 import { UploadBox } from "@/components/UploadBox";
@@ -24,6 +25,15 @@ import { useAppStore } from "@/lib/store";
 interface PdfToolTemplateProps {
   toolId: PdfToolId;
 }
+
+const panelToolPaths: Array<{ label: string; href: string }> = [
+  { label: "Page Numbers", href: "/tools/page-numbers" },
+  { label: "Watermark", href: "/tools/watermark" },
+  { label: "Rotate", href: "/tools/rotate" },
+  { label: "Protect", href: "/tools/protect" },
+  { label: "Unlock", href: "/tools/unlock" },
+  { label: "OCR", href: "/tools/ocr" }
+];
 
 export function PdfToolTemplate({ toolId }: PdfToolTemplateProps) {
   const router = useRouter();
@@ -202,24 +212,44 @@ export function PdfToolTemplate({ toolId }: PdfToolTemplateProps) {
   }
 
   return (
-    <div className="mx-auto flex max-w-5xl flex-col gap-6 px-4 py-8 md:px-6 lg:px-8">
-      <button
-        type="button"
-        onClick={() => router.push("/")}
-        className="mb-2 inline-flex w-max items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1 text-xs text-slate-600 shadow-sm transition hover:bg-slate-50"
-      >
-        <span>←</span>
-        <span>Back to all tools</span>
-      </button>
-      <div className="space-y-6">
+    <div className="mx-auto flex w-full max-w-[1380px] flex-col gap-8 px-4 py-8 md:px-8 lg:px-12">
+      <div className="mb-1 flex flex-wrap items-center gap-2 rounded-2xl border border-slate-200/70 bg-white/80 p-3 backdrop-blur sm:gap-3 dark:border-slate-800/70 dark:bg-slate-900/70">
+        <button
+          type="button"
+          onClick={() => router.push("/#tools")}
+          className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 shadow-sm transition hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800"
+        >
+          <span aria-hidden>←</span>
+          <span>Back to all tools</span>
+        </button>
+        <div className="flex flex-wrap items-center justify-end gap-2 sm:ml-auto">
+          {panelToolPaths.map(item => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="inline-flex items-center rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-medium text-slate-600 transition hover:border-indigo-200 hover:text-indigo-700 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-400 dark:hover:border-indigo-900 dark:hover:text-indigo-300"
+            >
+              {item.label}
+            </Link>
+          ))}
+        </div>
+      </div>
+      <div className="space-y-7">
         <div className="space-y-2">
-          <h1 className="text-2xl font-semibold tracking-tight text-slate-900 md:text-3xl">
+          <h1 className="text-2xl font-semibold tracking-tight text-slate-900 md:text-3xl dark:text-slate-100">
             {tool.title}
           </h1>
-          <p className="max-w-xl text-sm text-slate-600 md:text-base">{tool.description}</p>
+          <p className="max-w-xl text-sm text-slate-600 md:text-base dark:text-slate-400">{tool.description}</p>
         </div>
-        <div className={cn("grid gap-10", hasFiles ? "lg:grid-cols-2" : "grid-cols-1")}>
-          <div className={cn("space-y-4", !hasFiles && "mx-auto w-full max-w-3xl")}>
+        <div
+          className={cn(
+            "grid gap-8",
+            hasFiles
+              ? "lg:grid-cols-[minmax(0,1.15fr)_minmax(340px,0.85fr)] lg:items-start"
+              : "grid-cols-1"
+          )}
+        >
+          <div className={cn("space-y-4", !hasFiles && "mx-auto w-full max-w-4xl")}>
             <UploadBox
               onFilesSelected={accepted => setUploadedFiles([...(files ?? []), ...accepted])}
               accept={tool.accept}
@@ -271,20 +301,20 @@ export function PdfToolTemplate({ toolId }: PdfToolTemplateProps) {
             </div>
           </div>
           {hasFiles && (
-            <div className="space-y-4">
+            <div className="space-y-4 lg:sticky lg:top-24">
               {renderPanel()}
-              <div className="space-y-3 rounded-2xl bg-white p-5 shadow-sm">
+              <div className="space-y-3 rounded-2xl bg-white p-5 shadow-sm dark:bg-slate-900 dark:border dark:border-slate-800">
                 {tool.allowOrientation && (
                   <div className="space-y-2">
-                    <h4 className="text-xs font-medium text-slate-800">Page orientation</h4>
+                    <h4 className="text-xs font-medium text-slate-800 dark:text-slate-200">Page orientation</h4>
                     <div className="flex gap-2">
                       <button
                         type="button"
                         className={cn(
                           "flex-1 rounded-lg border px-3 py-2 text-xs",
                           orientation === "portrait"
-                            ? "border-red-500 bg-rose-50 text-rose-700"
-                            : "border-slate-200 text-slate-600"
+                            ? "border-red-500 bg-rose-50 text-rose-700 dark:bg-rose-950/30 dark:text-rose-400"
+                            : "border-slate-200 text-slate-600 dark:border-slate-800 dark:text-slate-400"
                         )}
                         onClick={() => setOrientation("portrait")}
                       >
@@ -295,8 +325,8 @@ export function PdfToolTemplate({ toolId }: PdfToolTemplateProps) {
                         className={cn(
                           "flex-1 rounded-lg border px-3 py-2 text-xs",
                           orientation === "landscape"
-                            ? "border-red-500 bg-rose-50 text-rose-700"
-                            : "border-slate-200 text-slate-600"
+                            ? "border-red-500 bg-rose-50 text-rose-700 dark:bg-rose-950/30 dark:text-rose-400"
+                            : "border-slate-200 text-slate-600 dark:border-slate-800 dark:text-slate-400"
                         )}
                         onClick={() => setOrientation("landscape")}
                       >
@@ -307,9 +337,9 @@ export function PdfToolTemplate({ toolId }: PdfToolTemplateProps) {
                 )}
                 {tool.allowPageSize && (
                   <div className="space-y-2 text-xs">
-                    <h4 className="font-medium text-slate-800">Page size</h4>
+                    <h4 className="font-medium text-slate-800 dark:text-slate-200">Page size</h4>
                     <select
-                      className="w-full rounded-lg border border-slate-200 p-2 text-xs outline-none focus:border-red-400 focus:ring-1 focus:ring-red-200"
+                      className="w-full rounded-lg border border-slate-200 p-2 text-xs outline-none focus:border-red-400 focus:ring-1 focus:ring-red-200 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-300 dark:focus:border-red-900"
                       value={pageSize}
                       onChange={e => setPageSize(e.target.value)}
                     >
@@ -321,15 +351,15 @@ export function PdfToolTemplate({ toolId }: PdfToolTemplateProps) {
                 )}
                 {tool.allowMargin && (
                   <div className="space-y-2 text-xs">
-                    <h4 className="font-medium text-slate-800">Margins</h4>
+                    <h4 className="font-medium text-slate-800 dark:text-slate-200">Margins</h4>
                     <div className="flex gap-2">
                       <button
                         type="button"
                         className={cn(
                           "flex-1 rounded-lg border px-3 py-2",
                           margin === "none"
-                            ? "border-red-500 bg-rose-50 text-rose-700"
-                            : "border-slate-200 text-slate-600"
+                            ? "border-red-500 bg-rose-50 text-rose-700 dark:bg-rose-950/30 dark:text-rose-400"
+                            : "border-slate-200 text-slate-600 dark:border-slate-800 dark:text-slate-400"
                         )}
                         onClick={() => setMargin("none")}
                       >
@@ -340,8 +370,8 @@ export function PdfToolTemplate({ toolId }: PdfToolTemplateProps) {
                         className={cn(
                           "flex-1 rounded-lg border px-3 py-2",
                           margin === "small"
-                            ? "border-red-500 bg-rose-50 text-rose-700"
-                            : "border-slate-200 text-slate-600"
+                            ? "border-red-500 bg-rose-50 text-rose-700 dark:bg-rose-950/30 dark:text-rose-400"
+                            : "border-slate-200 text-slate-600 dark:border-slate-800 dark:text-slate-400"
                         )}
                         onClick={() => setMargin("small")}
                       >
@@ -352,8 +382,8 @@ export function PdfToolTemplate({ toolId }: PdfToolTemplateProps) {
                         className={cn(
                           "flex-1 rounded-lg border px-3 py-2",
                           margin === "big"
-                            ? "border-red-500 bg-rose-50 text-rose-700"
-                            : "border-slate-200 text-slate-600"
+                            ? "border-red-500 bg-rose-50 text-rose-700 dark:bg-rose-950/30 dark:text-rose-400"
+                            : "border-slate-200 text-slate-600 dark:border-slate-800 dark:text-slate-400"
                         )}
                         onClick={() => setMargin("big")}
                       >
@@ -364,19 +394,19 @@ export function PdfToolTemplate({ toolId }: PdfToolTemplateProps) {
                 )}
                 {tool.allowBackgroundColor && (
                   <div className="space-y-2 text-xs">
-                    <h4 className="font-medium text-slate-800">Custom Background Color</h4>
+                    <h4 className="font-medium text-slate-800 dark:text-slate-200">Custom Background Color</h4>
                     <div className="flex items-center gap-3">
                       <input
                         type="color"
                         value={backgroundColor}
                         onChange={(e) => setBackgroundColor(e.target.value)}
-                        className="h-8 w-12 cursor-pointer rounded border border-slate-200"
+                        className="h-8 w-12 cursor-pointer rounded border border-slate-200 dark:border-slate-800 dark:bg-slate-950"
                       />
                       <input
                         type="text"
                         value={backgroundColor}
                         onChange={(e) => setBackgroundColor(e.target.value)}
-                        className="flex-1 rounded-lg border border-slate-200 p-2 text-xs outline-none focus:border-indigo-400"
+                        className="flex-1 rounded-lg border border-slate-200 p-2 text-xs outline-none focus:border-indigo-400 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-300"
                         placeholder="#ffffff"
                       />
                     </div>
@@ -430,7 +460,7 @@ export function PdfToolTemplate({ toolId }: PdfToolTemplateProps) {
                       Download File
                     </button>
                   )}
-                  <p className="mt-2 text-[11px] text-slate-500">
+                  <p className="mt-2 text-[11px] text-slate-500 dark:text-slate-400">
                     Files transfer over encrypted connections. Processed anonymously and auto-deleted after use — no login required.
                   </p>
                 </div>
@@ -438,14 +468,14 @@ export function PdfToolTemplate({ toolId }: PdfToolTemplateProps) {
             </div>
           )}
         </div>
-        <section className="rounded-3xl border border-indigo-100 bg-white/90 p-5 shadow-sm md:p-7">
-          <p className="text-xs font-semibold uppercase tracking-wide text-indigo-600">
+        <section className="rounded-3xl border border-indigo-100 bg-white/90 p-5 shadow-sm md:p-7 dark:border-indigo-900/50 dark:bg-slate-900/90">
+          <p className="text-xs font-semibold uppercase tracking-wide text-indigo-600 dark:text-indigo-400">
             TAJ PDF DOCS Tool Guide
           </p>
-          <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900 md:text-3xl">
+          <h2 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900 md:text-3xl dark:text-slate-100">
             {tool.title} - Fast, Secure and Simple
           </h2>
-          <p className="mt-2 text-sm text-slate-600 md:text-base">
+          <p className="mt-2 text-sm text-slate-600 md:text-base dark:text-slate-400">
             {tool.description}
           </p>
 
@@ -453,7 +483,7 @@ export function PdfToolTemplate({ toolId }: PdfToolTemplateProps) {
             {guideHighlights.map(highlight => (
               <span
                 key={highlight}
-                className="rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-xs font-medium text-indigo-700"
+                className="rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-xs font-medium text-indigo-700 dark:border-indigo-900 dark:bg-indigo-950/40 dark:text-indigo-300"
               >
                 {highlight}
               </span>
@@ -461,12 +491,12 @@ export function PdfToolTemplate({ toolId }: PdfToolTemplateProps) {
           </div>
 
           <div className="mt-5 grid gap-4 lg:grid-cols-3">
-            <Card className="border-indigo-100">
+            <Card className="border-indigo-100 dark:border-indigo-900/50 dark:bg-slate-800/70">
               <CardHeader>
-                <CardTitle className="text-base">How To Use</CardTitle>
+                <CardTitle className="text-base dark:text-slate-100">How To Use</CardTitle>
               </CardHeader>
               <CardContent>
-                <ol className="space-y-2 text-sm text-slate-700">
+                <ol className="space-y-2 text-sm text-slate-700 dark:text-slate-300">
                   <li>1. Upload your file in the upload area.</li>
                   <li>2. Set options based on your requirement.</li>
                   <li>3. Click &quot;{tool.actionLabel}&quot; to start.</li>
@@ -474,12 +504,12 @@ export function PdfToolTemplate({ toolId }: PdfToolTemplateProps) {
                 </ol>
               </CardContent>
             </Card>
-            <Card className="border-indigo-100">
+            <Card className="border-indigo-100 dark:border-indigo-900/50 dark:bg-slate-800/70">
               <CardHeader>
-                <CardTitle className="text-base">Why This Tool</CardTitle>
+                <CardTitle className="text-base dark:text-slate-100">Why This Tool</CardTitle>
               </CardHeader>
               <CardContent>
-                <ul className="space-y-2 text-sm text-slate-700">
+                <ul className="space-y-2 text-sm text-slate-700 dark:text-slate-300">
                   <li>Clean workflow with minimal steps</li>
                   <li>Stable output quality for documents</li>
                   <li>Secure encrypted transfer in transit</li>
@@ -487,12 +517,12 @@ export function PdfToolTemplate({ toolId }: PdfToolTemplateProps) {
                 </ul>
               </CardContent>
             </Card>
-            <Card className="border-indigo-100">
+            <Card className="border-indigo-100 dark:border-indigo-900/50 dark:bg-slate-800/70">
               <CardHeader>
-                <CardTitle className="text-base">Best For</CardTitle>
+                <CardTitle className="text-base dark:text-slate-100">Best For</CardTitle>
               </CardHeader>
               <CardContent>
-                <ul className="space-y-2 text-sm text-slate-700">
+                <ul className="space-y-2 text-sm text-slate-700 dark:text-slate-300">
                   <li>Office, legal and academic documents</li>
                   <li>Quick edits before sharing files</li>
                   <li>Daily PDF workflow automation</li>
@@ -503,42 +533,42 @@ export function PdfToolTemplate({ toolId }: PdfToolTemplateProps) {
           </div>
 
           <div className="mt-6 space-y-3">
-            <h3 className="text-lg font-semibold text-slate-900">Quick FAQs</h3>
-            <details className="rounded-xl border border-slate-200 bg-white px-4 py-3">
-              <summary className="cursor-pointer text-sm font-medium text-slate-900">
+            <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Quick FAQs</h3>
+            <details className="rounded-xl border border-slate-200 bg-white px-4 py-3 dark:border-slate-700 dark:bg-slate-800/70">
+              <summary className="cursor-pointer text-sm font-medium text-slate-900 dark:text-slate-100">
                 Is this {tool.title.toLowerCase()} tool free to use?
               </summary>
-              <p className="mt-2 text-sm text-slate-600">
+              <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
                 Yes, you can process files without login for standard usage.
               </p>
             </details>
-            <details className="rounded-xl border border-slate-200 bg-white px-4 py-3">
-              <summary className="cursor-pointer text-sm font-medium text-slate-900">
+            <details className="rounded-xl border border-slate-200 bg-white px-4 py-3 dark:border-slate-700 dark:bg-slate-800/70">
+              <summary className="cursor-pointer text-sm font-medium text-slate-900 dark:text-slate-100">
                 Will my original file be changed?
               </summary>
-              <p className="mt-2 text-sm text-slate-600">
+              <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
                 No, original files remain unchanged. You get a new processed output file.
               </p>
             </details>
-            <details className="rounded-xl border border-slate-200 bg-white px-4 py-3">
-              <summary className="cursor-pointer text-sm font-medium text-slate-900">
+            <details className="rounded-xl border border-slate-200 bg-white px-4 py-3 dark:border-slate-700 dark:bg-slate-800/70">
+              <summary className="cursor-pointer text-sm font-medium text-slate-900 dark:text-slate-100">
                 Is my uploaded data secure?
               </summary>
-              <p className="mt-2 text-sm text-slate-600">
+              <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
                 Files are transferred over encrypted connections and processed anonymously.
               </p>
             </details>
           </div>
 
           <div className="mt-6">
-            <h3 className="text-lg font-semibold text-slate-900">Explore More Tools</h3>
+            <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Explore More Tools</h3>
             <div className="mt-3 flex flex-wrap gap-2">
               {exploreTools.map(item => (
                 <button
                   key={item.id}
                   type="button"
                   onClick={() => router.push(`/tools/${item.id}`)}
-                  className="rounded-full border border-indigo-200 bg-white px-4 py-2 text-xs font-semibold text-indigo-700 transition hover:bg-indigo-50"
+                  className="rounded-full border border-indigo-200 bg-white px-4 py-2 text-xs font-semibold text-indigo-700 transition hover:bg-indigo-50 dark:border-indigo-900 dark:bg-slate-800 dark:text-indigo-300 dark:hover:bg-indigo-950/40"
                 >
                   {item.title}
                 </button>
