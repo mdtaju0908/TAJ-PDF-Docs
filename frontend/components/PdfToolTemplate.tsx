@@ -44,6 +44,8 @@ export function PdfToolTemplate({ toolId }: PdfToolTemplateProps) {
   const processingState = useAppStore(s => s.processingState);
   const hasFiles = files.length > 0;
   const [resultUrl, setResultUrl] = useState<string | null>(null);
+  const hasResult = Boolean(resultUrl);
+  const showActionPanel = hasFiles || hasResult;
   const [orientation, setOrientation] = useState<"portrait" | "landscape">("portrait");
   const [pageSize, setPageSize] = useState<string>("A4 (297x210 mm)");
   const [margin, setMargin] = useState<"none" | "small" | "big">("small");
@@ -140,6 +142,7 @@ export function PdfToolTemplate({ toolId }: PdfToolTemplateProps) {
       return;
     }
 
+    setResultUrl(null);
     const formData = new FormData();
     files.forEach(file => formData.append("files", file));
     formData.append("orientation", orientation);
@@ -165,7 +168,8 @@ export function PdfToolTemplate({ toolId }: PdfToolTemplateProps) {
         headers: { "Content-Type": "multipart/form-data" },
         onUploadProgress: (progressEvent) => {
           if (progressEvent.total) {
-            const percent = (progressEvent.loaded / progressEvent.total) * 100;
+            const rawPercent = (progressEvent.loaded / progressEvent.total) * 100;
+            const percent = Math.min(rawPercent, 90);
             const elapsed = (Date.now() - startTime) / 1000;
             const speed = progressEvent.loaded / elapsed;
             const remaining = progressEvent.total - progressEvent.loaded;
@@ -195,9 +199,16 @@ export function PdfToolTemplate({ toolId }: PdfToolTemplateProps) {
           }
         }
       });
-      const url: string | undefined = data?.download_url ?? data?.fileUrl ?? data?.url;
-      setResultUrl(url && typeof url === "string" && url.length > 0 ? url : null);
-      setUploadedFiles([]); // reset UI files after success
+      if (!data?.success) {
+        throw new Error(data?.message ?? `Unable to complete ${tool.title}.`);
+      }
+      setProcessing(true, { progress: 100, uploadSpeed: 0, timeLeft: 0 });
+      const url: string | undefined = data?.download_url ?? data?.fileUrl ?? data?.file_url ?? data?.url;
+      const normalizedUrl =
+        typeof url === "string" && url.length > 0
+          ? (url.startsWith("/") || /^https?:\/\//i.test(url) ? url : `/${url}`)
+          : null;
+      setResultUrl(normalizedUrl);
       setProcessing(false, { progress: 0 }); // ensure progress reset immediately
       toast.success(`${tool.title} completed successfully.`);
     } catch (error: any) {
@@ -300,9 +311,9 @@ export function PdfToolTemplate({ toolId }: PdfToolTemplateProps) {
               </button>
             </div>
           </div>
-          {hasFiles && (
+          {showActionPanel && (
             <div className="space-y-4 lg:sticky lg:top-24">
-              {renderPanel()}
+              {hasFiles && renderPanel()}
               <div className="space-y-3 rounded-2xl bg-white p-5 shadow-sm dark:bg-slate-900 dark:border dark:border-slate-800">
                 {tool.allowOrientation && (
                   <div className="space-y-2">
@@ -432,6 +443,16 @@ export function PdfToolTemplate({ toolId }: PdfToolTemplateProps) {
                       type="button"
                       onClick={async () => {
                         if (!resultUrl) return;
+                        if (/^https?:\/\//i.test(resultUrl)) {
+                          const directLink = document.createElement("a");
+                          directLink.href = resultUrl;
+                          directLink.target = "_blank";
+                          directLink.rel = "noopener";
+                          document.body.appendChild(directLink);
+                          directLink.click();
+                          document.body.removeChild(directLink);
+                          return;
+                        }
                         try {
                           const res = await fetch(resultUrl, { method: "GET" });
                           if (!res.ok) throw new Error("Failed to fetch file");
