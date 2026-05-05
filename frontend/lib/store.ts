@@ -1,5 +1,4 @@
 import { create } from "zustand";
-import type { PdfToolId } from "@/lib/tools";
 
 export type Plan = "free" | "pro";
 

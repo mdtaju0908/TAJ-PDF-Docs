@@ -10,7 +10,7 @@ load_dotenv(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file_
 class Settings(BaseModel):
     # Application settings loaded from environment with defaults
     API_KEYS: List[str] = []
-    ALLOWED_ORIGINS: List[str] = ["*"]
+    ALLOWED_ORIGINS: List[str] = ["https://taj-pdf-docs.vercel.app"]
     RATE_LIMIT_REQUESTS_PER_MINUTE: int = 60
     TMP_DIR: str = os.path.join(
         os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
@@ -38,7 +38,7 @@ def _get_env_list(key: str, default: List[str]) -> List[str]:
 
 settings = Settings(
     API_KEYS=_get_env_list("API_KEYS", []),
-    ALLOWED_ORIGINS=_get_env_list("ALLOWED_ORIGINS", ["*"]),
+    ALLOWED_ORIGINS=_get_env_list("ALLOWED_ORIGINS", ["https://taj-pdf-docs.vercel.app"]),
     RATE_LIMIT_REQUESTS_PER_MINUTE=int(os.getenv("RATE_LIMIT_REQUESTS_PER_MINUTE", "60")),
     TMP_DIR=os.getenv(
         "TMP_DIR",
