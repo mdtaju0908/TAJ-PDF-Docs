@@ -1,10 +1,13 @@
 "use client";
 
-import { useState } from "react";
+interface OCRPanelProps {
+  language: string;
+  searchable: boolean;
+  onLanguageChange: (language: string) => void;
+  onSearchableChange: (searchable: boolean) => void;
+}
 
-export function OCRPanel() {
-  const [language, setLanguage] = useState("en");
-  const [searchable, setSearchable] = useState(true);
+export function OCRPanel({ language, searchable, onLanguageChange, onSearchableChange }: OCRPanelProps) {
 
   return (
     <div className="rounded-2xl bg-white p-6 shadow-sm">
@@ -15,20 +18,21 @@ export function OCRPanel() {
           <label className="mb-1 block text-slate-700">Language</label>
           <select
             value={language}
-            onChange={e => setLanguage(e.target.value)}
+            onChange={e => onLanguageChange(e.target.value)}
             className="w-full rounded-lg border border-slate-200 px-3 py-2 text-xs outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-200"
           >
-            <option value="en">English</option>
-            <option value="es">Spanish</option>
-            <option value="fr">French</option>
-            <option value="de">German</option>
+            <option value="eng">English</option>
+            <option value="hin">Hindi</option>
+            <option value="spa">Spanish</option>
+            <option value="fra">French</option>
+            <option value="deu">German</option>
           </select>
         </div>
         <label className="flex items-center justify-between gap-2">
           <span>Make output searchable PDF</span>
           <button
             type="button"
-            onClick={() => setSearchable(!searchable)}
+            onClick={() => onSearchableChange(!searchable)}
             className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${
               searchable ? "bg-emerald-500" : "bg-slate-300"
             }`}

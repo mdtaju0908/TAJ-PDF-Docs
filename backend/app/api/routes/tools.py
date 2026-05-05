@@ -2,6 +2,7 @@ from typing import List, Optional, Dict, Any
 import json
 import asyncio
 import logging
+import os
 from fastapi import APIRouter, UploadFile, File, Form, HTTPException, Request
 from fastapi.responses import JSONResponse
 
@@ -23,7 +24,7 @@ from app.services.sign_pdf_service import run as sign_pdf_service
 from app.services.redact_pdf_service import run as redact_pdf_service
 from app.services.crop_pdf_service import run as crop_pdf_service
 from app.services.edit_service import rotate_pdf, add_page_numbers, add_watermark, protect_pdf, unlock_pdf
-from app.services.ocr_service import ocr_pdf_to_searchable
+from app.services.ocr_service import ocr_to_output
 from app.models.schemas import (
     SplitOptions,
     RotateOptions,
@@ -54,7 +55,7 @@ ALLOWED_TOOLS = {
     "add-watermark": [".pdf"],
     "protect": [".pdf"],
     "unlock": [".pdf"],
-    "ocr": [".pdf"],
+    "ocr": [".pdf", ".jpg", ".jpeg", ".png", ".webp"],
     "pdf-to-excel": [".pdf"],
     "pdf-to-ppt": [".pdf"],
     "excel-to-pdf": [".xlsx"],
@@ -65,6 +66,7 @@ ALLOWED_TOOLS = {
     "sign-pdf": [".pdf"],
     "redact-pdf": [".pdf"],
     "crop-pdf": [".pdf"],
+    "bg-remover": [".jpg", ".jpeg", ".png", ".webp"],
 }
 
 TOOL_MAP = {
@@ -143,7 +145,10 @@ async def dynamic_tool(
             elif tool == "unlock":
                 out_id = await asyncio.to_thread(unlock_pdf, paths[0], UnlockOptions(**opts))
             elif tool == "ocr":
-                out_id = await asyncio.to_thread(ocr_pdf_to_searchable, paths[0], OcrOptions(**opts))
+                out_id = await asyncio.to_thread(ocr_to_output, paths[0], OcrOptions(**opts))
+            elif tool == "bg-remover":
+                # Keep current mock behavior aligned with dedicated bg-remover route.
+                out_id = os.path.basename(paths[0])
             else:
                 raise HTTPException(status_code=400, detail="Unsupported tool")
         logger.info(f"Tool={tool} result={out_id}")

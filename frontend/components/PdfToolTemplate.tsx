@@ -51,6 +51,8 @@ export function PdfToolTemplate({ toolId }: PdfToolTemplateProps) {
   const [margin, setMargin] = useState<"none" | "small" | "big">("small");
   const [backgroundColor, setBackgroundColor] = useState("#ffffff");
   const [mergeAll, setMergeAll] = useState(false);
+  const [ocrLanguage, setOcrLanguage] = useState("eng");
+  const [ocrSearchable, setOcrSearchable] = useState(true);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const acceptString = useMemo(() => {
@@ -130,7 +132,14 @@ export function PdfToolTemplate({ toolId }: PdfToolTemplateProps) {
       case "unlock":
         return <UnlockPanel />;
       case "ocr":
-        return <OCRPanel />;
+        return (
+          <OCRPanel
+            language={ocrLanguage}
+            searchable={ocrSearchable}
+            onLanguageChange={setOcrLanguage}
+            onSearchableChange={setOcrSearchable}
+          />
+        );
       default:
         return null;
     }
@@ -148,8 +157,14 @@ export function PdfToolTemplate({ toolId }: PdfToolTemplateProps) {
     formData.append("orientation", orientation);
     formData.append("pageSize", pageSize);
     formData.append("margin", margin);
-    formData.append("backgroundColor", backgroundColor);
+    if (tool.allowBackgroundColor) {
+      formData.append("backgroundColor", backgroundColor);
+    }
     formData.append("mergeAll", String(mergeAll));
+    if (toolId === "ocr") {
+      formData.append("language", ocrLanguage);
+      formData.append("output_format", ocrSearchable ? "searchable_pdf" : "txt");
+    }
 
     const startTime = Date.now();
 
@@ -436,7 +451,9 @@ export function PdfToolTemplate({ toolId }: PdfToolTemplateProps) {
                   >
                     {processingState.isProcessing
                       ? "Processing..."
-                      : `Convert to ${tool.outputType?.toUpperCase() ?? "PDF"}`}
+                      : toolId === "ocr"
+                        ? `Convert to ${ocrSearchable ? "PDF" : "TXT"}`
+                        : `Convert to ${tool.outputType?.toUpperCase() ?? "PDF"}`}
                   </button>
                   {resultUrl && (
                     <button

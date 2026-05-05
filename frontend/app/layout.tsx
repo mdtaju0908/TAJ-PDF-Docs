@@ -8,6 +8,7 @@ import { ProcessingOverlay } from "@/components/ProcessingOverlay";
 import { ThemeProvider } from "@/components/theme-provider";
 
 const inter = Inter({ subsets: ["latin"], display: "swap", variable: "--font-inter" });
+const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "https://taj-pdf-docs.vercel.app").replace(/\/+$/, "");
 
 export const metadata: Metadata = {
   title: {
@@ -16,11 +17,31 @@ export const metadata: Metadata = {
   },
   description:
     "TAJ PDF Docs is a modern SaaS platform for merging, splitting, compressing and converting PDFs with enterprise-grade security.",
-  metadataBase: new URL("https://taj-pdf-docs.example.com"),
+  metadataBase: new URL(siteUrl),
+  alternates: {
+    canonical: "/"
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1
+    }
+  },
+  verification: {
+    google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION
+  },
   openGraph: {
     title: "TAJ PDF Docs – All-in-One PDF Tools Platform",
     description:
       "Merge, split, compress and convert PDFs in seconds. Built for product, legal and finance teams.",
+    url: siteUrl,
+    siteName: "TAJ PDF Docs",
+    locale: "en_US",
     type: "website",
     images: [
       {
@@ -30,6 +51,13 @@ export const metadata: Metadata = {
         alt: "TAJ PDF Docs Logo"
       }
     ]
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "TAJ PDF Docs – All-in-One PDF Tools Platform",
+    description:
+      "Merge, split, compress and convert PDFs in seconds. Built for product, legal and finance teams.",
+    images: ["/logo.svg"]
   },
   icons: {
     icon: [

@@ -24,7 +24,16 @@ export async function generateMetadata({ params }: ToolPageProps): Promise<Metad
 
   return {
     title: `${tool.title} – TAJ PDF Docs`,
-    description: tool.description
+    description: tool.description,
+    alternates: {
+      canonical: `/tools/${tool.id}`
+    },
+    openGraph: {
+      title: `${tool.title} – TAJ PDF Docs`,
+      description: tool.description,
+      url: `/tools/${tool.id}`,
+      type: "website"
+    }
   };
 }
 

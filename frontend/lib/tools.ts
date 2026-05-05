@@ -419,7 +419,10 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
     icon: "Search",
     color: "bg-cyan-100 text-cyan-600",
     accept: {
-      "application/pdf": [".pdf"]
+      "application/pdf": [".pdf"],
+      "image/jpeg": [".jpg", ".jpeg"],
+      "image/png": [".png"],
+      "image/webp": [".webp"]
     },
     buttonText: "Start OCR",
     gradient: "from-cyan-500 to-sky-500",
@@ -659,7 +662,6 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
     bgLight: "bg-indigo-50",
     cardColor: "bg-indigo-50",
     panelType: "bg-remover",
-    allowBackgroundColor: true,
     cardBg: "bg-indigo-50/50",
     iconBg: "bg-indigo-100",
     iconColor: "text-indigo-700",

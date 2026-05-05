@@ -48,4 +48,5 @@ class WordToPdfOptions(BaseModel):
 
 class OcrOptions(BaseModel):
     language: str = Field("eng", description="Tesseract language code")
+    output_format: str = Field("searchable_pdf", description="OCR output format: searchable_pdf or txt")
 

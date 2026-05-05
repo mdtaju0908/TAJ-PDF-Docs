@@ -3,15 +3,19 @@ import { TOOL_DEFINITIONS } from "@/lib/tools";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const base =
-    (process.env.NEXT_PUBLIC_SITE_URL || "https://taj-pdf-docs.example.com").replace(/\/+$/, "");
+    (process.env.NEXT_PUBLIC_SITE_URL || "https://taj-pdf-docs.vercel.app").replace(/\/+$/, "");
   const now = new Date();
 
   const staticPaths = [
     "/",
+    "/about",
+    "/disclaimer",
     "/features",
-    "/security",
     "/help",
-    "/about"
+    "/legal",
+    "/privacy",
+    "/security",
+    "/terms"
   ];
 
   const entries: MetadataRoute.Sitemap = [
