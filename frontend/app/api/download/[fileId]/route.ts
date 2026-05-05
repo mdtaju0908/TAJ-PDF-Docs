@@ -1,8 +1,9 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 export const runtime = "nodejs";
 
-export async function GET(req: Request, { params }: { params: { fileId: string } }) {
+export async function GET(_req: NextRequest, { params }: { params: Promise<{ fileId: string }> }) {
+  const { fileId } = await params;
   const apiKey = process.env.NEXT_PUBLIC_API_KEY ?? "";
   const base = process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_BACKEND_URL || "";
   
@@ -13,7 +14,7 @@ export async function GET(req: Request, { params }: { params: { fileId: string }
     );
   }
 
-  const url = `${base}/api/download/${params.fileId}`;
+  const url = `${base}/api/download/${fileId}`;
   
   try {
     console.debug("Forwarding download request to", url);
