@@ -11,7 +11,7 @@ from app.utils.response import success_response
 from app.services.merge_service import merge_pdfs
 from app.services.split_service import split_pdf
 from app.services.compress_service import compress_pdf
-from app.services.convert_service import pdf_to_word, jpg_to_pdf, pdf_to_jpg
+from app.services.convert_service import pdf_to_word, jpg_to_pdf, pdf_to_jpg_zip
 from app.services.word_to_pdf_service import run as word_to_pdf_service
 from app.services.pdf_to_ppt_service import run as pdf_to_ppt_service
 from app.services.pdf_to_excel_service import run as pdf_to_excel_service
@@ -132,8 +132,7 @@ async def dynamic_tool(
             elif tool == "jpg-to-pdf":
                 out_id = await asyncio.to_thread(jpg_to_pdf, paths)
             elif tool == "pdf-to-jpg":
-                out_ids = await asyncio.to_thread(pdf_to_jpg, paths[0])
-                out_id = out_ids[0] if out_ids else ""
+                out_id = await asyncio.to_thread(pdf_to_jpg_zip, paths[0])
             elif tool == "rotate":
                 out_id = await asyncio.to_thread(rotate_pdf, paths[0], RotateOptions(**opts))
             elif tool == "add-page-numbers":

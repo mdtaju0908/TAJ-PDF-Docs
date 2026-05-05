@@ -77,6 +77,18 @@ def pdf_to_jpg(pdf_path: str) -> List[str]:
     return outputs
 
 
+def pdf_to_jpg_zip(pdf_path: str) -> str:
+    # Converts all PDF pages to JPG and bundles them into a single ZIP file.
+    pages = convert_from_path(pdf_path)
+    out_path, out_id = create_temp_file(".zip")
+    with zipfile.ZipFile(out_path, "w", compression=zipfile.ZIP_DEFLATED) as zf:
+        for i, img in enumerate(pages, start=1):
+            buffer = io.BytesIO()
+            img.save(buffer, "JPEG")
+            zf.writestr(f"page-{i:03d}.jpg", buffer.getvalue())
+    return out_id
+
+
 def pdf_to_excel(pdf_path: str) -> str:
     # Extracts tables from PDF into an XLSX workbook
     out_path, out_id = create_temp_file(".xlsx")
