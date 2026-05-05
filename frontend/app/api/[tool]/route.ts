@@ -1,8 +1,9 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 export const runtime = "nodejs";
 
-export async function POST(req: Request, { params }: { params: { tool: string } }) {
+export async function POST(req: NextRequest, { params }: { params: Promise<{ tool: string }> }) {
+  const { tool } = await params;
   const formData = await req.formData();
   const apiKey = process.env.NEXT_PUBLIC_API_KEY ?? "";
   const base = process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_BACKEND_URL || "";
@@ -12,9 +13,9 @@ export async function POST(req: Request, { params }: { params: { tool: string } 
       { status: 500 }
     );
   }
-  const url = `${base}/api/${params.tool}`;
+  const url = `${base}/api/${tool}`;
   try {
-    console.debug("Forwarding request to", url, "tool", params.tool);
+    console.debug("Forwarding request to", url, "tool", tool);
     const res = await fetch(url, {
       method: "POST",
       body: formData,
