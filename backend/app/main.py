@@ -23,6 +23,7 @@ from app.api.routes.edit import router as edit_router
 from app.api.routes.ocr import router as ocr_router
 from app.api.routes.tools import router as tools_router
 from app.api.routes.bg_remover import router as bg_remover_router
+from app.api.routes.report_issue import router as report_issue_router
 
 app = FastAPI(
     title="Smart PDF Tools Backend",
@@ -70,6 +71,9 @@ app.include_router(
 )
 app.include_router(
     bg_remover_router, prefix="/api", tags=["bg-remover"], dependencies=[verify_api_key, get_rate_limiter()]
+)
+app.include_router(
+    report_issue_router, prefix="/api", tags=["report-issue"], dependencies=[verify_api_key, get_rate_limiter()]
 )
 
 

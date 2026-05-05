@@ -23,6 +23,13 @@ class Settings(BaseModel):
     AWS_ACCESS_KEY_ID: str = os.getenv("AWS_ACCESS_KEY_ID", "")
     AWS_SECRET_ACCESS_KEY: str = os.getenv("AWS_SECRET_ACCESS_KEY", "")
     AWS_S3_ENDPOINT_URL: str = os.getenv("AWS_S3_ENDPOINT_URL", "")
+    SMTP_HOST: str = os.getenv("SMTP_HOST", "")
+    SMTP_PORT: int = int(os.getenv("SMTP_PORT", "587"))
+    SMTP_USER: str = os.getenv("SMTP_USER", "")
+    SMTP_PASSWORD: str = os.getenv("SMTP_PASSWORD", "")
+    SMTP_USE_TLS: bool = os.getenv("SMTP_USE_TLS", "true").lower() in {"1", "true", "yes", "on"}
+    SMTP_FROM_EMAIL: str = os.getenv("SMTP_FROM_EMAIL", "")
+    REPORT_ISSUE_TO: str = os.getenv("REPORT_ISSUE_TO", "24tec2csml175@vgu.ac.in")
 
     class Config:
         arbitrary_types_allowed = True
@@ -54,6 +61,13 @@ settings = Settings(
     AWS_ACCESS_KEY_ID=os.getenv("AWS_ACCESS_KEY_ID", ""),
     AWS_SECRET_ACCESS_KEY=os.getenv("AWS_SECRET_ACCESS_KEY", ""),
     AWS_S3_ENDPOINT_URL=os.getenv("AWS_S3_ENDPOINT_URL", ""),
+    SMTP_HOST=os.getenv("SMTP_HOST", ""),
+    SMTP_PORT=int(os.getenv("SMTP_PORT", "587")),
+    SMTP_USER=os.getenv("SMTP_USER", ""),
+    SMTP_PASSWORD=os.getenv("SMTP_PASSWORD", ""),
+    SMTP_USE_TLS=os.getenv("SMTP_USE_TLS", "true").lower() in {"1", "true", "yes", "on"},
+    SMTP_FROM_EMAIL=os.getenv("SMTP_FROM_EMAIL", ""),
+    REPORT_ISSUE_TO=os.getenv("REPORT_ISSUE_TO", "24tec2csml175@vgu.ac.in"),
 )
 
 # Ensure temp directory exists

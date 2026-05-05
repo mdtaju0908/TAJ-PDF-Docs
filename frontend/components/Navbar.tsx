@@ -7,6 +7,7 @@ import { ChevronDown } from "lucide-react";
 import { TOOL_DEFINITIONS } from "@/lib/tools";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "./ThemeToggle";
+import { IssueReportModal } from "./IssueReportModal";
 
 const primaryLinks = [
   { href: "/tools/merge", label: "MERGE PDF" },
@@ -71,6 +72,10 @@ export function Navbar() {
               {link.label}
             </Link>
           ))}
+          <IssueReportModal
+            triggerLabel="REPORT ISSUE"
+            triggerClassName="inline-flex items-center gap-1 whitespace-nowrap border-b-2 border-transparent py-1 transition-all hover:border-slate-900/40 dark:hover:border-slate-100/40"
+          />
           <div className="relative">
             <button
               type="button"
@@ -168,6 +173,11 @@ export function Navbar() {
                 <span>{link.label}</span>
               </Link>
             ))}
+            <IssueReportModal
+              triggerLabel="Report Issue"
+              onOpen={() => setOpen(false)}
+              triggerClassName="flex items-center justify-between rounded-2xl px-3 py-2 text-slate-700 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-900"
+            />
             <div className="mt-3 flex items-center justify-between border-t border-slate-100 pt-3 dark:border-slate-800">
               <span className="text-xs font-medium text-slate-500 dark:text-slate-400">Theme</span>
               <ThemeToggle />
