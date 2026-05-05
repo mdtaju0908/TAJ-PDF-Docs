@@ -443,16 +443,6 @@ export function PdfToolTemplate({ toolId }: PdfToolTemplateProps) {
                       type="button"
                       onClick={async () => {
                         if (!resultUrl) return;
-                        if (/^https?:\/\//i.test(resultUrl)) {
-                          const directLink = document.createElement("a");
-                          directLink.href = resultUrl;
-                          directLink.target = "_blank";
-                          directLink.rel = "noopener";
-                          document.body.appendChild(directLink);
-                          directLink.click();
-                          document.body.removeChild(directLink);
-                          return;
-                        }
                         try {
                           const res = await fetch(resultUrl, { method: "GET" });
                           if (!res.ok) throw new Error("Failed to fetch file");
@@ -473,7 +463,8 @@ export function PdfToolTemplate({ toolId }: PdfToolTemplateProps) {
                           document.body.removeChild(link);
                           URL.revokeObjectURL(objectUrl);
                         } catch (e) {
-                          toast.error("Unable to download file");
+                          // Fallback in same tab (never open a new tab)
+                          window.location.href = resultUrl;
                         }
                       }}
                       className="mt-3 w-full rounded-xl bg-green-600 px-6 py-3 text-center text-sm font-medium text-white"
