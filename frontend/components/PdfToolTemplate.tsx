@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { Loader2 } from "lucide-react";
 import { TOOL_DEFINITIONS, type PdfToolId, getToolDefinition } from "@/lib/tools";
 import { UploadBox } from "@/components/UploadBox";
 import { PremiumPreview } from "@/components/PremiumPreview";
@@ -55,6 +56,7 @@ export function PdfToolTemplate({ toolId }: PdfToolTemplateProps) {
   const [mergeAll, setMergeAll] = useState(false);
   const [ocrLanguage, setOcrLanguage] = useState("eng");
   const [ocrSearchable, setOcrSearchable] = useState(true);
+  const [isDownloading, setIsDownloading] = useState(false);
 
   const appendFilesInSequence = (incoming: File[]) => {
     if (!incoming.length) return;
@@ -115,6 +117,27 @@ export function PdfToolTemplate({ toolId }: PdfToolTemplateProps) {
     () => TOOL_DEFINITIONS.filter(item => item.id !== tool.id).slice(0, 8),
     [tool.id]
   );
+
+  const outputExt = useMemo(() => {
+    if (toolId === "pdf-to-jpg") return "zip";
+    if (toolId === "ocr") return ocrSearchable ? "pdf" : "txt";
+    if (tool.outputType) return tool.outputType.toLowerCase();
+    if (targetFormatLabel.toLowerCase().includes("pdf")) return "pdf";
+    if (targetFormatLabel.toLowerCase().includes("ppt")) return "pptx";
+    if (targetFormatLabel.toLowerCase().includes("word") || targetFormatLabel.toLowerCase().includes("doc")) return "docx";
+    if (targetFormatLabel.toLowerCase().includes("excel") || targetFormatLabel.toLowerCase().includes("xls")) return "xlsx";
+    if (targetFormatLabel.toLowerCase().includes("jpg") || targetFormatLabel.toLowerCase().includes("jpeg")) return "jpg";
+    if (targetFormatLabel.toLowerCase().includes("png")) return "png";
+    return "pdf";
+  }, [ocrSearchable, targetFormatLabel, tool.outputType, toolId]);
+
+  function buildDownloadName() {
+    const firstName = files[0]?.name ?? "result";
+    const base = firstName.replace(/\.[^/.]+$/, "") || "result";
+    if (toolId === "merge") return `${base}-merged.${outputExt}`;
+    if (toolId === "split") return `${base}-split.${outputExt}`;
+    return `${base}-converted.${outputExt}`;
+  }
 
   function renderPanel() {
     if (!files.length) return null;
@@ -425,60 +448,61 @@ export function PdfToolTemplate({ toolId }: PdfToolTemplateProps) {
                   </div>
                 )}
                 <div className="pt-1">
-                  <button
-                    type="button"
-                    onClick={handleConvert}
-                    disabled={processingState.isProcessing || files.length === 0}
-                    className={cn(
-                      "w-full rounded-xl px-6 py-3 text-sm font-medium text-white transition",
-                      "bg-gradient-to-r from-red-500 to-orange-500 hover:opacity-90",
-                      processingState.isProcessing && "opacity-70"
-                    )}
-                  >
-                    {processingState.isProcessing
-                      ? "Processing..."
-                      : toolId === "ocr"
-                        ? `Convert to ${ocrSearchable ? "PDF" : "TXT"}`
-                        : `Convert to ${tool.outputType?.toUpperCase() ?? "PDF"}`}
-                  </button>
+                  {!resultUrl && (
+                    <button
+                      type="button"
+                      onClick={handleConvert}
+                      disabled={processingState.isProcessing || files.length === 0}
+                      className={cn(
+                        "w-full rounded-xl px-6 py-3 text-sm font-medium text-white transition",
+                        "bg-gradient-to-r from-red-500 to-orange-500 hover:opacity-90",
+                        processingState.isProcessing && "opacity-70"
+                      )}
+                    >
+                      {processingState.isProcessing
+                        ? "Processing..."
+                        : toolId === "ocr"
+                          ? `Convert to ${ocrSearchable ? "PDF" : "TXT"}`
+                          : `Convert to ${tool.outputType?.toUpperCase() ?? "PDF"}`}
+                    </button>
+                  )}
                   {resultUrl && (
                     <button
                       type="button"
                       onClick={async () => {
-                        if (!resultUrl) return;
-                        const loadingToast = toast.loading("Preparing download...");
+                        if (!resultUrl || isDownloading) return;
+                        setIsDownloading(true);
                         try {
                           const res = await fetch(resultUrl, { method: "GET" });
                           if (!res.ok) throw new Error("Failed to fetch file");
                           const blob = await res.blob();
-                          const cd = res.headers.get("content-disposition") || "";
-                          const nameMatch =
-                            /filename\*=UTF-8''([^;]+)|filename="([^"]+)"/i.exec(cd);
-                          const resolvedName =
-                            (nameMatch?.[1] && decodeURIComponent(nameMatch[1])) ||
-                            nameMatch?.[2] ||
-                            (tool.outputType ? `result.${tool.outputType}` : "result");
                           const objectUrl = URL.createObjectURL(blob);
                           const link = document.createElement("a");
                           link.href = objectUrl;
-                          link.setAttribute("download", resolvedName);
+                          link.setAttribute("download", buildDownloadName());
                           document.body.appendChild(link);
                           link.click();
                           document.body.removeChild(link);
                           URL.revokeObjectURL(objectUrl);
-                          toast.success("Download started.", { id: loadingToast });
                           setUploadedFiles([]);
                           setResultUrl(null);
                         } catch (e) {
-                          toast.message("Direct download opening...", { id: loadingToast });
+                          toast.error("Download failed. Please try again.");
                           window.location.href = resultUrl;
-                          setUploadedFiles([]);
-                          setResultUrl(null);
+                        } finally {
+                          setIsDownloading(false);
                         }
                       }}
-                      className="mt-3 w-full rounded-xl bg-green-600 px-6 py-3 text-center text-sm font-medium text-white"
+                      disabled={isDownloading}
+                      className={cn(
+                        "mt-3 w-full rounded-xl bg-green-600 px-6 py-3 text-center text-sm font-medium text-white",
+                        isDownloading && "opacity-70"
+                      )}
                     >
-                      Download File
+                      <span className="inline-flex items-center justify-center gap-2">
+                        {isDownloading && <Loader2 className="h-4 w-4 animate-spin" />}
+                        {isDownloading ? "Preparing download..." : "Download File"}
+                      </span>
                     </button>
                   )}
                   <p className="mt-2 text-[11px] text-slate-500 dark:text-slate-400">
