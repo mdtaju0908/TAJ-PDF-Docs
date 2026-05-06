@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
@@ -11,7 +11,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { apiClient } from "@/lib/api";
-import { MergePanel } from "@/components/panels/MergePanel";
 import { SplitPanel } from "@/components/panels/SplitPanel";
 import { CompressPanel } from "@/components/panels/CompressPanel";
 import { EditPanel } from "@/components/panels/EditPanel";
@@ -53,14 +52,21 @@ export function PdfToolTemplate({ toolId }: PdfToolTemplateProps) {
   const [pageSize, setPageSize] = useState<string>("A4 (297x210 mm)");
   const [margin, setMargin] = useState<"none" | "small" | "big">("small");
   const [backgroundColor, setBackgroundColor] = useState("#ffffff");
-  const [mergeAll, setMergeAll] = useState(false);
   const [ocrLanguage, setOcrLanguage] = useState("eng");
   const [ocrSearchable, setOcrSearchable] = useState(true);
   const [isDownloading, setIsDownloading] = useState(false);
+  const uploadMetricsRef = useRef<{ lastLoaded: number; lastTime: number }>({ lastLoaded: 0, lastTime: 0 });
+  const mergeAll = toolId === "merge";
+
+  const replaceFiles = (nextFiles: File[]) => {
+    setUploadedFiles(nextFiles);
+    // If input files changed, stale result should be cleared.
+    if (resultUrl) setResultUrl(null);
+  };
 
   const appendFilesInSequence = (incoming: File[]) => {
     if (!incoming.length) return;
-    setUploadedFiles([...(files ?? []), ...incoming]);
+    replaceFiles([...(files ?? []), ...incoming]);
   };
 
   useEffect(() => {
@@ -143,7 +149,7 @@ export function PdfToolTemplate({ toolId }: PdfToolTemplateProps) {
     if (!files.length) return null;
     switch (tool.panelType) {
       case "merge":
-        return <MergePanel files={files} mergeAll={mergeAll} onMergeAllChange={setMergeAll} />;
+        return null;
       case "split":
         return <SplitPanel />;
       case "compress":
@@ -196,9 +202,11 @@ export function PdfToolTemplate({ toolId }: PdfToolTemplateProps) {
     }
 
     const startTime = Date.now();
+    uploadMetricsRef.current = { lastLoaded: 0, lastTime: performance.now() };
 
     setProcessing(true, {
       progress: 0,
+      phase: "uploading",
       totalFiles: files.length,
       currentFileIndex: 1,
       fileName: files[0].name,
@@ -212,12 +220,20 @@ export function PdfToolTemplate({ toolId }: PdfToolTemplateProps) {
         headers: { "Content-Type": "multipart/form-data" },
         onUploadProgress: (progressEvent) => {
           if (progressEvent.total) {
-            const rawPercent = (progressEvent.loaded / progressEvent.total) * 100;
-            const percent = Math.min(rawPercent, 90);
+            const now = performance.now();
+            const loadedDelta = Math.max(0, progressEvent.loaded - uploadMetricsRef.current.lastLoaded);
+            const timeDeltaSec = Math.max((now - uploadMetricsRef.current.lastTime) / 1000, 0.001);
+            const instantSpeed = loadedDelta / timeDeltaSec;
             const elapsed = (Date.now() - startTime) / 1000;
-            const speed = progressEvent.loaded / elapsed;
+            const averageSpeed = elapsed > 0 ? progressEvent.loaded / elapsed : 0;
+            const speed = instantSpeed > 0 ? instantSpeed : averageSpeed;
+            const rawPercent = (progressEvent.loaded / progressEvent.total) * 100;
+            const percent = Math.min(rawPercent, 100);
             const remaining = progressEvent.total - progressEvent.loaded;
-            const time = speed > 0 ? remaining / speed : 0;
+            const isUploadDone = progressEvent.loaded >= progressEvent.total;
+            const time = !isUploadDone && speed > 0 ? remaining / speed : 0;
+
+            uploadMetricsRef.current = { lastLoaded: progressEvent.loaded, lastTime: now };
             
             // Estimate current file index based on cumulative size
             let currentIdx = 1;
@@ -234,11 +250,12 @@ export function PdfToolTemplate({ toolId }: PdfToolTemplateProps) {
 
             setProcessing(true, {
               progress: percent,
+              phase: isUploadDone ? "processing" : "uploading",
               currentFileIndex: currentIdx,
               fileName: currentFile.name,
               fileSize: currentFile.size,
-              uploadSpeed: speed,
-              timeLeft: time
+              uploadSpeed: isUploadDone ? 0 : speed,
+              timeLeft: isUploadDone ? 0 : time
             });
           }
         }
@@ -246,14 +263,14 @@ export function PdfToolTemplate({ toolId }: PdfToolTemplateProps) {
       if (!data?.success) {
         throw new Error(data?.message ?? `Unable to complete ${tool.title}.`);
       }
-      setProcessing(true, { progress: 100, uploadSpeed: 0, timeLeft: 0 });
+      setProcessing(true, { progress: 100, phase: "finalizing", uploadSpeed: 0, timeLeft: 0 });
       const url: string | undefined = data?.download_url ?? data?.fileUrl ?? data?.file_url ?? data?.url;
       const normalizedUrl =
         typeof url === "string" && url.length > 0
           ? (url.startsWith("/") || /^https?:\/\//i.test(url) ? url : `/${url}`)
           : null;
       setResultUrl(normalizedUrl);
-      setProcessing(false, { progress: 0 }); // ensure progress reset immediately
+      setProcessing(false, { progress: 0, phase: "uploading" }); // ensure progress reset immediately
       toast.success(`${tool.title} completed successfully.`);
     } catch (error: any) {
       const message =
@@ -262,7 +279,7 @@ export function PdfToolTemplate({ toolId }: PdfToolTemplateProps) {
           : error?.message ?? `Unable to complete ${tool.title}.`;
       toast.error(message);
     } finally {
-      setProcessing(false, { progress: 0 });
+      setProcessing(false, { progress: 0, phase: "uploading" });
     }
   }
 
@@ -330,6 +347,7 @@ export function PdfToolTemplate({ toolId }: PdfToolTemplateProps) {
                     }
                     iconBg={tool.iconBg ?? "bg-gray-100"}
                     iconColor={tool.iconColor ?? "text-gray-500"}
+                    onRemove={() => replaceFiles(files.filter((_, i) => i !== index))}
                   />
                 ))}
               </div>

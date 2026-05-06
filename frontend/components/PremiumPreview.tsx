@@ -1,16 +1,17 @@
 "use client";
 
 import { useEffect, useMemo } from "react";
-import { FileText } from "lucide-react";
+import { FileText, X } from "lucide-react";
 
 interface PremiumPreviewProps {
   file: File;
   extensionLabel: string;
   iconBg: string;
   iconColor: string;
+  onRemove?: () => void;
 }
 
-export function PremiumPreview({ file, extensionLabel, iconBg, iconColor }: PremiumPreviewProps) {
+export function PremiumPreview({ file, extensionLabel, iconBg, iconColor, onRemove }: PremiumPreviewProps) {
   const ext = (file.name.split(".").pop() || "").toLowerCase();
   const isPdf = file.type === "application/pdf" || ext === "pdf";
   const previewUrl = useMemo(() => URL.createObjectURL(file), [file]);
@@ -20,7 +21,17 @@ export function PremiumPreview({ file, extensionLabel, iconBg, iconColor }: Prem
   }, [previewUrl]);
 
   return (
-    <div className="w-full max-w-sm rounded-2xl border border-slate-200 bg-white p-4 shadow-md dark:border-slate-800 dark:bg-slate-900">
+    <div className="relative w-full max-w-sm rounded-2xl border border-slate-200 bg-white p-4 shadow-md dark:border-slate-800 dark:bg-slate-900">
+      {onRemove && (
+        <button
+          type="button"
+          onClick={onRemove}
+          className="absolute right-2 top-2 z-10 inline-flex h-7 w-7 items-center justify-center rounded-full bg-white/95 text-slate-500 shadow-sm ring-1 ring-slate-200 transition hover:text-rose-600 dark:bg-slate-900/95 dark:text-slate-300 dark:ring-slate-700 dark:hover:text-rose-400"
+          aria-label={`Remove ${file.name}`}
+        >
+          <X className="h-4 w-4" />
+        </button>
+      )}
       <div className="relative overflow-hidden rounded-xl bg-slate-50 dark:bg-slate-800/70">
         <div
           className={`${iconBg} ${iconColor} absolute left-3 top-3 rounded-md px-2 py-1 text-xs font-semibold`}

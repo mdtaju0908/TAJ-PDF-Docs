@@ -17,6 +17,7 @@ export interface UsageStats {
 export interface ProcessingState {
   isProcessing: boolean;
   progress: number;
+  phase?: "uploading" | "processing" | "finalizing";
   totalFiles?: number;
   currentFileIndex?: number;
   fileName?: string;
