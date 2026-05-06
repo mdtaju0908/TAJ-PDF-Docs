@@ -4,7 +4,8 @@ import asyncio
 
 from app.utils.file_handler import save_upload_files, resolve_download_path
 from app.utils.response import success_response
-from app.services.convert_service import pdf_to_word, jpg_to_pdf, pdf_to_jpg_zip, pdf_to_ppt
+from app.services.convert_service import pdf_to_word, jpg_to_pdf, pdf_to_jpg_zip
+from app.services.pdf_to_ppt_service import run as pdf_to_ppt_service
 from app.services.word_to_pdf_service import word_to_pdf_lo
 from app.utils.s3_client import upload_file as s3_upload_file, generate_signed_url as s3_signed_url, delete_local_file as s3_delete_local
 from app.models.schemas import PdfToWordOptions, WordToPdfOptions
@@ -124,8 +125,7 @@ async def pdf_to_ppt_endpoint(
     chosen: Optional[UploadFile] = file if file is not None else (files[0] if files else None)
     if chosen is None:
         raise HTTPException(status_code=400, detail="No file provided")
-    paths = await save_upload_files([chosen], allowed_exts=[".pdf"])
-    out_id = await asyncio.to_thread(pdf_to_ppt, paths[0])
+    out_id = await pdf_to_ppt_service([chosen], {})
     if settings.AWS_S3_BUCKET:
         file_path = resolve_download_path(out_id)
         try:

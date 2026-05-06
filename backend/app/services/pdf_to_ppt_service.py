@@ -28,10 +28,8 @@ async def run(files: List[UploadFile], options: Optional[dict] = None) -> str:
                 slide.shapes.add_picture(b, 0, 0, prs.slide_width, prs.slide_height)
             prs.save(out_path)
             return out_id
-        except Exception:
-            from app.services.convert_service import pdf_to_ppt as fallback
-            out_id = fallback(paths[0])
-            return out_id
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=f"PDF to PowerPoint conversion failed: {str(exc)}")
     finally:
         for p in paths:
             try:

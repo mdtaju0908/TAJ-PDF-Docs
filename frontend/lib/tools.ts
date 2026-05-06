@@ -170,6 +170,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
     bgLight: "bg-red-50",
     cardColor: "bg-red-50",
     extensionLabel: "PPTX",
+    outputType: "pptx",
     cardBg: "bg-red-50/50",
     iconBg: "bg-red-100",
     iconColor: "text-red-600"
