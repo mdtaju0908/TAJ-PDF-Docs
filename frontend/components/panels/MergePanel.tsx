@@ -15,12 +15,15 @@ export function MergePanel({ files, mergeAll, onMergeAllChange }: MergePanelProp
       <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-100">Merge settings</h2>
       <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">Reorder files and choose how to merge them.</p>
       <div className="mt-4 space-y-2">
-        {files.map(file => (
+        {files.map((file, index) => (
           <div
-            key={file.name}
+            key={`${file.name}-${index}`}
             className="flex items-center justify-between rounded-lg border border-slate-100 bg-slate-50 px-3 py-2 text-xs text-slate-700 dark:border-slate-800 dark:bg-slate-800/50 dark:text-slate-300"
           >
             <div className="flex items-center gap-2">
+              <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-slate-200 text-[10px] font-semibold text-slate-600 dark:bg-slate-700 dark:text-slate-200">
+                {index + 1}
+              </span>
               <GripVertical className="h-3 w-3 text-slate-400 dark:text-slate-500" />
               <span className="truncate">{file.name}</span>
             </div>

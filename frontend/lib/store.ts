@@ -31,6 +31,7 @@ interface AppStore {
   usageStats: UsageStats;
   currentPlan: Plan;
   uploadedFiles: File[];
+  activeToolId: string | null;
   processingState: ProcessingState;
   securitySettings: {
     retentionDays: number;
@@ -42,6 +43,7 @@ interface AppStore {
   clearFiles: () => void;
   setProcessing: (isProcessing: boolean, state?: Partial<Omit<ProcessingState, 'isProcessing'>>) => void;
   setUploadedFiles: (files: File[]) => void;
+  setActiveToolId: (toolId: string | null) => void;
   updateSecuritySettings: (retentionDays: number, restrictedAccess: boolean) => void;
 }
 
@@ -55,6 +57,7 @@ export const useAppStore = create<AppStore>((set) => ({
   },
   currentPlan: "free",
   uploadedFiles: [],
+  activeToolId: null,
   processingState: {
     isProcessing: false,
     progress: 0
@@ -75,6 +78,7 @@ export const useAppStore = create<AppStore>((set) => ({
       user: null,
       token: null,
       uploadedFiles: [],
+      activeToolId: null,
       processingState: { isProcessing: false, progress: 0 }
     })),
 
@@ -92,6 +96,8 @@ export const useAppStore = create<AppStore>((set) => ({
 
   setUploadedFiles: (files) => set(() => ({ uploadedFiles: files }))
   ,
+
+  setActiveToolId: (toolId) => set(() => ({ activeToolId: toolId })),
 
   updateSecuritySettings: (retentionDays, restrictedAccess) =>
     set((state) => ({

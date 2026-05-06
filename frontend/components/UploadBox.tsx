@@ -231,9 +231,9 @@ export function UploadBox({
       <div
         {...getRootProps()}
         className={cn(
-          "group relative flex cursor-pointer flex-col items-center justify-center overflow-hidden rounded-2xl border-2 border-dashed px-6 py-10 text-center transition-all duration-300 hover:shadow-lg",
+          "group relative flex cursor-pointer flex-col items-center justify-center overflow-hidden rounded-2xl border-2 border-dashed px-4 py-6 text-center transition-all duration-300 hover:shadow-lg",
           variant === "tool" &&
-            "rounded-3xl border-indigo-300 bg-white px-6 py-14 hover:-translate-y-0.5 hover:border-indigo-400 hover:shadow-sm dark:border-indigo-900 dark:bg-slate-900/50",
+            "rounded-3xl border-indigo-300 bg-white px-4 py-7 hover:-translate-y-0.5 hover:border-indigo-400 hover:shadow-sm dark:border-indigo-900 dark:bg-slate-900/50",
           variant === "hero" &&
             "rounded-[28px] border-slate-200 bg-white px-8 py-12 shadow-[0_20px_60px_-28px_rgba(15,23,42,0.35)] hover:-translate-y-0.5 hover:border-indigo-200 dark:border-slate-800 dark:bg-slate-900 dark:shadow-[0_20px_60px_-28px_rgba(0,0,0,0.5)]",
           isDragActive && "shadow-soft",
@@ -257,16 +257,16 @@ export function UploadBox({
         )}
         <input {...getInputProps()} />
         {showCategoryVisual ? (
-          <div className="mb-6 flex items-center justify-center gap-3 rounded-2xl bg-slate-50 px-4 py-3 transition-all duration-300 group-hover:bg-indigo-50/70 dark:bg-slate-800/50 dark:group-hover:bg-indigo-900/30">
+          <div className="mb-4 flex items-center justify-center gap-2.5 rounded-2xl bg-slate-50 px-3 py-2.5 transition-all duration-300 group-hover:bg-indigo-50/70 dark:bg-slate-800/50 dark:group-hover:bg-indigo-900/30">
             <div className="flex flex-col items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm transition-transform duration-300 group-hover:-translate-y-0.5 dark:border-slate-800 dark:bg-slate-900">
-              <sourceMeta.Icon className={cn("h-9 w-9", sourceMeta.iconClass)} />
+              <sourceMeta.Icon className={cn("h-7 w-7", sourceMeta.iconClass)} />
               <span className={cn("rounded-md px-2 py-0.5 text-[11px] font-semibold", sourceMeta.chipClass)}>
                 {sourceFormatLabel}
               </span>
             </div>
-            <ArrowRight className="h-5 w-5 text-slate-400 transition-transform duration-300 group-hover:translate-x-1 dark:text-slate-600" />
+            <ArrowRight className="h-4 w-4 text-slate-400 transition-transform duration-300 group-hover:translate-x-1 dark:text-slate-600" />
             <div className="flex flex-col items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm transition-transform duration-300 group-hover:translate-y-0.5 dark:border-slate-800 dark:bg-slate-900">
-              <targetMeta.Icon className={cn("h-9 w-9", targetMeta.iconClass)} />
+              <targetMeta.Icon className={cn("h-7 w-7", targetMeta.iconClass)} />
               <span className={cn("rounded-md px-2 py-0.5 text-[11px] font-semibold", targetMeta.chipClass)}>
                 {targetFormatLabel}
               </span>
@@ -276,14 +276,14 @@ export function UploadBox({
           <div
             className={cn(
               "mb-3 flex h-12 w-12 items-center justify-center text-indigo-500",
-              variant === "tool" && "mb-5 h-20 w-20 text-violet-500 dark:text-violet-400",
+              variant === "tool" && "mb-3 h-14 w-14 text-violet-500 dark:text-violet-400",
               variant === "hero" && "mb-6 h-16 w-16 rounded-2xl bg-indigo-50 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400"
             )}
           >
             <CloudUpload
               className={cn(
                 "h-10 w-10 stroke-[2.2]",
-                variant === "tool" && "h-16 w-16 stroke-[2.1]",
+                variant === "tool" && "h-10 w-10 stroke-[2.1]",
                 variant === "hero" && "h-9 w-9 stroke-[2.2]"
               )}
             />
@@ -292,7 +292,7 @@ export function UploadBox({
         <p
           className={cn(
             "text-sm font-medium text-slate-900 dark:text-slate-100",
-            variant === "tool" && "text-3xl",
+            variant === "tool" && "text-xl",
             variant === "hero" && "text-[30px] font-semibold tracking-tight"
           )}
         >
@@ -301,7 +301,7 @@ export function UploadBox({
         <p
           className={cn(
             "mt-1 text-xs text-slate-500 dark:text-slate-400",
-            variant === "tool" && "mt-3 text-base",
+            variant === "tool" && "mt-1.5 text-sm",
             variant === "hero" && "mt-3 text-base text-slate-600 dark:text-slate-400"
           )}
         >
@@ -310,7 +310,7 @@ export function UploadBox({
         <span
           className={cn(
             "mt-4 rounded-lg bg-slate-900 px-4 py-2 text-xs font-medium text-white transition-all duration-300 dark:bg-slate-100 dark:text-slate-950",
-            variant === "tool" && "mt-6 rounded-xl bg-indigo-600 px-7 py-3 text-sm group-hover:bg-indigo-700 dark:bg-indigo-500 dark:group-hover:bg-indigo-600 dark:text-white",
+            variant === "tool" && "mt-4 rounded-xl bg-indigo-600 px-5 py-2 text-sm group-hover:bg-indigo-700 dark:bg-indigo-500 dark:group-hover:bg-indigo-600 dark:text-white",
             variant === "hero" &&
               "mt-7 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 px-8 py-3 text-sm font-semibold shadow-md shadow-indigo-500/30 group-hover:from-indigo-700 group-hover:to-violet-700 dark:from-indigo-500 dark:to-violet-500 dark:group-hover:from-indigo-600 dark:group-hover:to-violet-600 dark:text-white"
           )}

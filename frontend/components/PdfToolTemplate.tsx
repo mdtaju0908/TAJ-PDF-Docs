@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { TOOL_DEFINITIONS, type PdfToolId, getToolDefinition } from "@/lib/tools";
@@ -40,6 +40,8 @@ export function PdfToolTemplate({ toolId }: PdfToolTemplateProps) {
   const tool = getToolDefinition(toolId);
   const files = useAppStore(s => s.uploadedFiles);
   const setUploadedFiles = useAppStore(s => s.setUploadedFiles);
+  const activeToolId = useAppStore(s => s.activeToolId);
+  const setActiveToolId = useAppStore(s => s.setActiveToolId);
   const setProcessing = useAppStore(s => s.setProcessing);
   const processingState = useAppStore(s => s.processingState);
   const hasFiles = files.length > 0;
@@ -53,16 +55,20 @@ export function PdfToolTemplate({ toolId }: PdfToolTemplateProps) {
   const [mergeAll, setMergeAll] = useState(false);
   const [ocrLanguage, setOcrLanguage] = useState("eng");
   const [ocrSearchable, setOcrSearchable] = useState(true);
-  const inputRef = useRef<HTMLInputElement>(null);
 
-  const acceptString = useMemo(() => {
-    const parts: string[] = [];
-    for (const [mime, exts] of Object.entries(tool.accept)) {
-      parts.push(mime);
-      parts.push(...exts);
+  const appendFilesInSequence = (incoming: File[]) => {
+    if (!incoming.length) return;
+    setUploadedFiles([...(files ?? []), ...incoming]);
+  };
+
+  useEffect(() => {
+    // Clear stale files when navigating between different tool pages.
+    if (activeToolId && activeToolId !== toolId) {
+      setUploadedFiles([]);
+      setResultUrl(null);
     }
-    return parts.join(",");
-  }, [tool.accept]);
+    setActiveToolId(toolId);
+  }, [activeToolId, setActiveToolId, setUploadedFiles, toolId]);
 
   const sourceFormatLabel = useMemo(() => {
     const firstExt = Object.values(tool.accept).flat()[0];
@@ -276,20 +282,22 @@ export function PdfToolTemplate({ toolId }: PdfToolTemplateProps) {
           )}
         >
           <div className={cn("space-y-4", !hasFiles && "w-full")}>
-            <UploadBox
-              onFilesSelected={accepted => setUploadedFiles([...(files ?? []), ...accepted])}
-              accept={tool.accept}
-              multiple
-              busy={processingState.isProcessing}
-              headline={`Select a ${sourcePrompt}`}
-              subline={`Upload one ${sourcePrompt} to get ${targetFormatLabel}.`}
-              ctaLabel={`Select ${sourcePrompt}`}
-              variant="tool"
-              sourceFormatLabel={sourceFormatLabel}
-              targetFormatLabel={targetFormatLabel}
-            />
+            <div className={cn("mx-auto w-full", !hasFiles && "max-w-4xl", hasFiles && "max-w-5xl")}>
+              <UploadBox
+                onFilesSelected={appendFilesInSequence}
+                accept={tool.accept}
+                multiple
+                busy={processingState.isProcessing}
+                headline={`Select a ${sourcePrompt}`}
+                subline={`Upload one ${sourcePrompt} to get ${targetFormatLabel}.`}
+                ctaLabel={`Select ${sourcePrompt}`}
+                variant="tool"
+                sourceFormatLabel={sourceFormatLabel}
+                targetFormatLabel={targetFormatLabel}
+              />
+            </div>
             {hasFiles && (
-              <div className="mt-2 grid grid-cols-2 gap-6 md:grid-cols-2">
+              <div className="mt-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
                 {files.map((file, index) => (
                   <PremiumPreview
                     key={`${file.name}-${index}`}
@@ -303,28 +311,6 @@ export function PdfToolTemplate({ toolId }: PdfToolTemplateProps) {
                 ))}
               </div>
             )}
-            <input
-              ref={inputRef}
-              type="file"
-              accept={acceptString}
-              multiple
-              className="hidden"
-              onChange={e => {
-                const selected = Array.from(e.target.files ?? []);
-                if (selected.length) {
-                  setUploadedFiles([...(files ?? []), ...selected]);
-                }
-              }}
-            />
-            <div className="flex gap-3">
-              <button
-                onClick={() => inputRef.current?.click()}
-                type="button"
-                className="rounded-lg bg-red-600 px-4 py-2 text-white"
-              >
-                Add more files
-              </button>
-            </div>
           </div>
           {showActionPanel && (
             <div className="space-y-4 lg:sticky lg:top-24">
@@ -460,6 +446,7 @@ export function PdfToolTemplate({ toolId }: PdfToolTemplateProps) {
                       type="button"
                       onClick={async () => {
                         if (!resultUrl) return;
+                        const loadingToast = toast.loading("Preparing download...");
                         try {
                           const res = await fetch(resultUrl, { method: "GET" });
                           if (!res.ok) throw new Error("Failed to fetch file");
@@ -479,9 +466,14 @@ export function PdfToolTemplate({ toolId }: PdfToolTemplateProps) {
                           link.click();
                           document.body.removeChild(link);
                           URL.revokeObjectURL(objectUrl);
+                          toast.success("Download started.", { id: loadingToast });
+                          setUploadedFiles([]);
+                          setResultUrl(null);
                         } catch (e) {
-                          // Fallback in same tab (never open a new tab)
+                          toast.message("Direct download opening...", { id: loadingToast });
                           window.location.href = resultUrl;
+                          setUploadedFiles([]);
+                          setResultUrl(null);
                         }
                       }}
                       className="mt-3 w-full rounded-xl bg-green-600 px-6 py-3 text-center text-sm font-medium text-white"
