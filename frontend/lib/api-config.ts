@@ -5,20 +5,18 @@ import axios from "axios";
 
 // Get API URL from environment with proper fallbacks
 const getApiBaseUrl = (): string => {
-  // Priority 1: NEXT_PUBLIC_API_URL environment variable
+  if (typeof window !== 'undefined') {
+    // Browser must always hit Next.js proxy routes to avoid CORS issues.
+    return '';
+  }
+
+  // Server-side (route handlers / SSR) can use backend env URL when available.
   if (process.env.NEXT_PUBLIC_API_URL) {
     return process.env.NEXT_PUBLIC_API_URL;
   }
-  
-  // Priority 2: NEXT_PUBLIC_BACKEND_URL environment variable  
+
   if (process.env.NEXT_PUBLIC_BACKEND_URL) {
     return process.env.NEXT_PUBLIC_BACKEND_URL;
-  }
-  
-  // Priority 3: Default based on environment
-  if (typeof window !== 'undefined') {
-    // Browser environment - base is empty because we use interceptor to add /api
-    return '';
   }
   
   // Server-side environment with no explicit backend URL:
