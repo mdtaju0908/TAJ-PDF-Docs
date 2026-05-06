@@ -14,6 +14,7 @@ from app.services.compress_service import compress_pdf
 from app.services.convert_service import pdf_to_word, jpg_to_pdf, pdf_to_jpg_zip
 from app.services.word_to_pdf_service import run as word_to_pdf_service
 from app.services.pdf_to_ppt_service import run as pdf_to_ppt_service
+from app.services.ppt_to_pdf_service import run as ppt_to_pdf_service
 from app.services.pdf_to_excel_service import run as pdf_to_excel_service
 from app.services.excel_to_pdf_service import run as excel_to_pdf_service
 from app.services.html_to_pdf_service import run as html_to_pdf_service
@@ -23,6 +24,10 @@ from app.services.repair_pdf_service import run as repair_pdf_service
 from app.services.sign_pdf_service import run as sign_pdf_service
 from app.services.redact_pdf_service import run as redact_pdf_service
 from app.services.crop_pdf_service import run as crop_pdf_service
+from app.services.compare_pdf_service import run as compare_pdf_service
+from app.services.pdf_a_service import run as pdf_a_service
+from app.services.edit_pdf_service import run as edit_pdf_service
+from app.services.bg_remover_service import run as bg_remover_service
 from app.services.edit_service import rotate_pdf, add_page_numbers, add_watermark, protect_pdf, unlock_pdf
 from app.services.ocr_service import ocr_to_output
 from app.models.schemas import (
@@ -58,6 +63,10 @@ ALLOWED_TOOLS = {
     "ocr": [".pdf", ".jpg", ".jpeg", ".png", ".webp"],
     "pdf-to-excel": [".pdf"],
     "pdf-to-ppt": [".pdf"],
+    "ppt-to-pdf": [".ppt", ".pptx"],
+    "edit": [".pdf"],
+    "compare": [".pdf"],
+    "pdf-a": [".pdf"],
     "excel-to-pdf": [".xlsx"],
     "html-to-pdf": [".html", ".htm"],
     "organize-pdf": [".pdf"],
@@ -70,7 +79,11 @@ ALLOWED_TOOLS = {
 }
 
 TOOL_MAP = {
+    "edit": edit_pdf_service,
+    "compare": compare_pdf_service,
+    "pdf-a": pdf_a_service,
     "pdf-to-ppt": pdf_to_ppt_service,
+    "ppt-to-pdf": ppt_to_pdf_service,
     "pdf-to-excel": pdf_to_excel_service,
     "excel-to-pdf": excel_to_pdf_service,
     "html-to-pdf": html_to_pdf_service,
@@ -81,6 +94,7 @@ TOOL_MAP = {
     "redact-pdf": redact_pdf_service,
     "crop-pdf": crop_pdf_service,
     "word-to-pdf": word_to_pdf_service,
+    "bg-remover": bg_remover_service,
 }
 
 @router.get("/tools")
@@ -145,9 +159,6 @@ async def dynamic_tool(
                 out_id = await asyncio.to_thread(unlock_pdf, paths[0], UnlockOptions(**opts))
             elif tool == "ocr":
                 out_id = await asyncio.to_thread(ocr_to_output, paths[0], OcrOptions(**opts))
-            elif tool == "bg-remover":
-                # Keep current mock behavior aligned with dedicated bg-remover route.
-                out_id = os.path.basename(paths[0])
             else:
                 raise HTTPException(status_code=400, detail="Unsupported tool")
         logger.info(f"Tool={tool} result={out_id}")
