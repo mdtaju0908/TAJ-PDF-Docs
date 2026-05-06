@@ -39,6 +39,7 @@ Directory structure:
     │       │   ├── organize_pdf_service.py
     │       │   ├── pdf_to_excel_service.py
     │       │   ├── pdf_to_ppt_service.py
+    │       │   ├── ppt_to_pdf_service.py
     │       │   ├── redact_pdf_service.py
     │       │   ├── repair_pdf_service.py
     │       │   ├── scan_to_pdf_service.py
@@ -51,6 +52,7 @@ Directory structure:
     │           ├── s3.py
     │           └── s3_client.py
     └── frontend/
+        ├── filestructure.md
         ├── next-env.d.ts
         ├── next.config.mjs
         ├── package.json
@@ -111,7 +113,6 @@ Directory structure:
         │   ├── panels/
         │   │   ├── CompressPanel.tsx
         │   │   ├── EditPanel.tsx
-        │   │   ├── MergePanel.tsx
         │   │   ├── NumberingPanel.tsx
         │   │   ├── OCRPanel.tsx
         │   │   ├── ProtectPanel.tsx
