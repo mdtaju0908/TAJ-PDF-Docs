@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
@@ -10,7 +10,6 @@ import { PremiumPreview } from "@/components/PremiumPreview";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
-import { apiClient } from "@/lib/api";
 import { SplitPanel } from "@/components/panels/SplitPanel";
 import { CompressPanel } from "@/components/panels/CompressPanel";
 import { EditPanel } from "@/components/panels/EditPanel";
@@ -21,6 +20,7 @@ import { ProtectPanel } from "@/components/panels/ProtectPanel";
 import { UnlockPanel } from "@/components/panels/UnlockPanel";
 import { OCRPanel } from "@/components/panels/OCRPanel";
 import { useAppStore } from "@/lib/store";
+import { useChunkedUpload } from "@/hooks/useChunkedUpload";
 
 interface PdfToolTemplateProps {
   toolId: PdfToolId;
@@ -57,7 +57,7 @@ export function PdfToolTemplate({ toolId }: PdfToolTemplateProps) {
   const [ocrLanguage, setOcrLanguage] = useState("eng");
   const [ocrSearchable, setOcrSearchable] = useState(true);
   const [isDownloading, setIsDownloading] = useState(false);
-  const uploadMetricsRef = useRef<{ lastLoaded: number; lastTime: number }>({ lastLoaded: 0, lastTime: 0 });
+  const { startChunkedUpload } = useChunkedUpload();
   const mergeAll = toolId === "merge";
 
   const replaceFiles = (nextFiles: File[]) => {
@@ -190,46 +190,43 @@ export function PdfToolTemplate({ toolId }: PdfToolTemplateProps) {
     }
 
     setResultUrl(null);
-    const formData = new FormData();
-    files.forEach(file => formData.append("files", file));
-    formData.append("orientation", orientation);
-    formData.append("pageSize", pageSize);
-    formData.append("margin", margin);
+    const requestOptions: Record<string, string | number | boolean> = {
+      orientation,
+      pageSize,
+      margin,
+      mergeAll,
+    };
     if (tool.allowBackgroundColor) {
-      formData.append("backgroundColor", backgroundColor);
+      requestOptions.backgroundColor = backgroundColor;
     }
-    formData.append("mergeAll", String(mergeAll));
     const opts = toolOptions[toolId] ?? {};
     for (const [key, value] of Object.entries(opts)) {
       if (value !== undefined && value !== null && value !== "") {
-        formData.append(key, String(value));
+        requestOptions[key] = value;
       }
     }
     if (toolId === "ocr") {
-      formData.append("language", ocrLanguage);
-      formData.append("output_format", ocrSearchable ? "searchable_pdf" : "txt");
+      requestOptions.language = ocrLanguage;
+      requestOptions.output_format = ocrSearchable ? "searchable_pdf" : "txt";
     }
     if (toolId === "rotate" && !opts.degrees) {
-      formData.append("degrees", "90");
+      requestOptions.degrees = 90;
     }
     if (toolId === "compress" && !opts.quality) {
-      formData.append("quality", "ebook");
+      requestOptions.quality = "ebook";
     }
     if (toolId === "split" && !opts.ranges) {
-      formData.append("ranges", "1-1");
+      requestOptions.ranges = "1-1";
     }
     if (toolId === "page-numbers") {
-      if (!opts.position) formData.append("position", "bottom-right");
-      if (!opts.start) formData.append("start", "1");
-      if (!opts.font_size) formData.append("font_size", "12");
+      if (!opts.position) requestOptions.position = "bottom-right";
+      if (!opts.start) requestOptions.start = 1;
+      if (!opts.font_size) requestOptions.font_size = 12;
     }
     if (toolId === "watermark") {
-      if (!opts.text) formData.append("text", "CONFIDENTIAL");
-      if (!opts.opacity) formData.append("opacity", "0.2");
+      if (!opts.text) requestOptions.text = "CONFIDENTIAL";
+      if (!opts.opacity) requestOptions.opacity = 0.2;
     }
-
-    const startTime = Date.now();
-    uploadMetricsRef.current = { lastLoaded: 0, lastTime: performance.now() };
 
     setProcessing(true, {
       progress: 0,
@@ -243,49 +240,10 @@ export function PdfToolTemplate({ toolId }: PdfToolTemplateProps) {
     });
 
     try {
-      const { data } = await apiClient.post(`${toolId}`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-        onUploadProgress: (progressEvent) => {
-          if (progressEvent.total) {
-            const now = performance.now();
-            const loadedDelta = Math.max(0, progressEvent.loaded - uploadMetricsRef.current.lastLoaded);
-            const timeDeltaSec = Math.max((now - uploadMetricsRef.current.lastTime) / 1000, 0.001);
-            const instantSpeed = loadedDelta / timeDeltaSec;
-            const elapsed = (Date.now() - startTime) / 1000;
-            const averageSpeed = elapsed > 0 ? progressEvent.loaded / elapsed : 0;
-            const speed = instantSpeed > 0 ? instantSpeed : averageSpeed;
-            const rawPercent = (progressEvent.loaded / progressEvent.total) * 100;
-            const percent = Math.min(rawPercent, 100);
-            const remaining = progressEvent.total - progressEvent.loaded;
-            const isUploadDone = progressEvent.loaded >= progressEvent.total;
-            const time = !isUploadDone && speed > 0 ? remaining / speed : 0;
-
-            uploadMetricsRef.current = { lastLoaded: progressEvent.loaded, lastTime: now };
-            
-            // Estimate current file index based on cumulative size
-            let currentIdx = 1;
-            let currentFile = files[0];
-            let accSize = 0;
-            for (let i = 0; i < files.length; i++) {
-              accSize += files[i].size;
-              if (progressEvent.loaded <= accSize || i === files.length - 1) {
-                currentIdx = i + 1;
-                currentFile = files[i];
-                break;
-              }
-            }
-
-            setProcessing(true, {
-              progress: percent,
-              phase: isUploadDone ? "processing" : "uploading",
-              currentFileIndex: currentIdx,
-              fileName: currentFile.name,
-              fileSize: currentFile.size,
-              uploadSpeed: isUploadDone ? 0 : speed,
-              timeLeft: isUploadDone ? 0 : time
-            });
-          }
-        }
+      const data = await startChunkedUpload({
+        files,
+        toolId,
+        options: requestOptions,
       });
       if (!data?.success) {
         throw new Error(data?.message ?? `Unable to complete ${tool.title}.`);

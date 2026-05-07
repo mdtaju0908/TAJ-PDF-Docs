@@ -21,6 +21,7 @@ from app.api.routes.compress import router as compress_router
 from app.api.routes.convert import router as convert_router
 from app.api.routes.edit import router as edit_router
 from app.api.routes.ocr import router as ocr_router
+from app.api.routes.upload import router as upload_router
 from app.api.routes.tools import router as tools_router
 from app.api.routes.bg_remover import router as bg_remover_router
 from app.api.routes.report_issue import router as report_issue_router
@@ -65,6 +66,10 @@ app.include_router(
 )
 app.include_router(
     ocr_router, prefix="/api", tags=["ocr"], dependencies=[verify_api_key, get_rate_limiter()]
+)
+# Keep upload routes above dynamic /{tool} routes.
+app.include_router(
+    upload_router, prefix="/api", tags=["upload"], dependencies=[verify_api_key, get_rate_limiter()]
 )
 app.include_router(
     tools_router, prefix="/api", tags=["tools"], dependencies=[verify_api_key, get_rate_limiter()]

@@ -24,6 +24,9 @@ export interface ProcessingState {
   fileSize?: number;
   uploadSpeed?: number;
   timeLeft?: number;
+  queueCompletedFiles?: number;
+  queueTotalFiles?: number;
+  isPaused?: boolean;
 }
 
 interface AppStore {
@@ -35,6 +38,11 @@ interface AppStore {
   activeToolId: string | null;
   toolOptions: Record<string, Record<string, string | number | boolean>>;
   processingState: ProcessingState;
+  uploadControls: {
+    pauseRequested: boolean;
+    resumeRequested: boolean;
+    cancelRequested: boolean;
+  };
   securitySettings: {
     retentionDays: number;
     restrictedAccess: boolean;
@@ -44,6 +52,10 @@ interface AppStore {
   logout: () => void;
   clearFiles: () => void;
   setProcessing: (isProcessing: boolean, state?: Partial<Omit<ProcessingState, 'isProcessing'>>) => void;
+  requestPauseUpload: () => void;
+  requestResumeUpload: () => void;
+  requestCancelUpload: () => void;
+  clearUploadRequests: () => void;
   setUploadedFiles: (files: File[]) => void;
   setActiveToolId: (toolId: string | null) => void;
   setToolOption: (toolId: string, key: string, value: string | number | boolean) => void;
@@ -67,6 +79,11 @@ export const useAppStore = create<AppStore>((set) => ({
     isProcessing: false,
     progress: 0
   },
+  uploadControls: {
+    pauseRequested: false,
+    resumeRequested: false,
+    cancelRequested: false
+  },
   securitySettings: {
     retentionDays: 0,
     restrictedAccess: false
@@ -85,7 +102,12 @@ export const useAppStore = create<AppStore>((set) => ({
       uploadedFiles: [],
       activeToolId: null,
       toolOptions: {},
-      processingState: { isProcessing: false, progress: 0 }
+      processingState: { isProcessing: false, progress: 0 },
+      uploadControls: {
+        pauseRequested: false,
+        resumeRequested: false,
+        cancelRequested: false
+      }
     })),
 
   clearFiles: () => set(() => ({ uploadedFiles: [] })),
@@ -97,6 +119,41 @@ export const useAppStore = create<AppStore>((set) => ({
         ...state,
         isProcessing,
         progress: state.progress ?? (isProcessing ? prev.processingState.progress : 0)
+      }
+    })),
+
+  requestPauseUpload: () =>
+    set((state) => ({
+      uploadControls: {
+        ...state.uploadControls,
+        pauseRequested: true,
+        resumeRequested: false
+      }
+    })),
+
+  requestResumeUpload: () =>
+    set((state) => ({
+      uploadControls: {
+        ...state.uploadControls,
+        pauseRequested: false,
+        resumeRequested: true
+      }
+    })),
+
+  requestCancelUpload: () =>
+    set((state) => ({
+      uploadControls: {
+        ...state.uploadControls,
+        cancelRequested: true
+      }
+    })),
+
+  clearUploadRequests: () =>
+    set(() => ({
+      uploadControls: {
+        pauseRequested: false,
+        resumeRequested: false,
+        cancelRequested: false
       }
     })),
 
