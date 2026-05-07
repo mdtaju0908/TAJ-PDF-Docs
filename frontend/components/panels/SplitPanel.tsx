@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { useAppStore } from "@/lib/store";
 
 export function SplitPanel() {
+  const setToolOption = useAppStore(s => s.setToolOption);
   const [range, setRange] = useState("");
   const [pageCount, setPageCount] = useState("");
 
@@ -15,7 +17,11 @@ export function SplitPanel() {
           <label className="mb-1 block text-slate-700">Page ranges</label>
           <input
             value={range}
-            onChange={e => setRange(e.target.value)}
+            onChange={e => {
+              const value = e.target.value;
+              setRange(value);
+              setToolOption("split", "ranges", value || "1-1");
+            }}
             placeholder="e.g. 1-3,5,8-10"
             className="w-full rounded-lg border border-slate-200 px-3 py-2 text-xs outline-none focus:border-rose-400 focus:ring-1 focus:ring-rose-200"
           />
@@ -26,7 +32,11 @@ export function SplitPanel() {
             type="number"
             min={1}
             value={pageCount}
-            onChange={e => setPageCount(e.target.value)}
+            onChange={e => {
+              const value = e.target.value;
+              setPageCount(value);
+              if (value) setToolOption("split", "page_count", Number(value));
+            }}
             placeholder="Every N pages"
             className="w-full rounded-lg border border-slate-200 px-3 py-2 text-xs outline-none focus:border-rose-400 focus:ring-1 focus:ring-rose-200"
           />

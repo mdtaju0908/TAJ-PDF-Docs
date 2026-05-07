@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { useAppStore } from "@/lib/store";
 
 export function RotatePanel() {
+  const setToolOption = useAppStore(s => s.setToolOption);
   const [direction, setDirection] = useState<"left" | "right">("right");
   const [applyAll, setApplyAll] = useState(true);
 
@@ -13,7 +15,10 @@ export function RotatePanel() {
       <div className="mt-4 flex gap-2 text-xs">
         <button
           type="button"
-          onClick={() => setDirection("left")}
+          onClick={() => {
+            setDirection("left");
+            setToolOption("rotate", "degrees", 270);
+          }}
           className={`flex-1 rounded-lg border px-3 py-2 ${
             direction === "left"
               ? "border-purple-500 bg-purple-50 text-purple-700"
@@ -24,7 +29,10 @@ export function RotatePanel() {
         </button>
         <button
           type="button"
-          onClick={() => setDirection("right")}
+          onClick={() => {
+            setDirection("right");
+            setToolOption("rotate", "degrees", 90);
+          }}
           className={`flex-1 rounded-lg border px-3 py-2 ${
             direction === "right"
               ? "border-purple-500 bg-purple-50 text-purple-700"

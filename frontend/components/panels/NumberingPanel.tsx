@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { useAppStore } from "@/lib/store";
 
 export function NumberingPanel() {
+  const setToolOption = useAppStore(s => s.setToolOption);
   const [position, setPosition] = useState("bottom-right");
   const [start, setStart] = useState("1");
   const [fontSize, setFontSize] = useState("12");
@@ -17,7 +19,11 @@ export function NumberingPanel() {
           <label className="mb-1 block text-slate-700">Position</label>
           <select
             value={position}
-            onChange={e => setPosition(e.target.value)}
+            onChange={e => {
+              const value = e.target.value;
+              setPosition(value);
+              setToolOption("page-numbers", "position", value);
+            }}
             className="w-full rounded-lg border border-slate-200 px-3 py-2 text-xs outline-none focus:border-violet-400 focus:ring-1 focus:ring-violet-200"
           >
             <option value="top-left">Top left</option>
@@ -33,7 +39,11 @@ export function NumberingPanel() {
               type="number"
               min={1}
               value={start}
-              onChange={e => setStart(e.target.value)}
+              onChange={e => {
+                const value = e.target.value;
+                setStart(value);
+                if (value) setToolOption("page-numbers", "start", Number(value));
+              }}
               className="w-full rounded-lg border border-slate-200 px-3 py-2 text-xs outline-none focus:border-violet-400 focus:ring-1 focus:ring-violet-200"
             />
           </div>
@@ -43,7 +53,11 @@ export function NumberingPanel() {
               type="number"
               min={8}
               value={fontSize}
-              onChange={e => setFontSize(e.target.value)}
+              onChange={e => {
+                const value = e.target.value;
+                setFontSize(value);
+                if (value) setToolOption("page-numbers", "font_size", Number(value));
+              }}
               className="w-full rounded-lg border border-slate-200 px-3 py-2 text-xs outline-none focus:border-violet-400 focus:ring-1 focus:ring-violet-200"
             />
           </div>

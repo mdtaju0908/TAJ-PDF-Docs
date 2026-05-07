@@ -42,6 +42,8 @@ export function PdfToolTemplate({ toolId }: PdfToolTemplateProps) {
   const setUploadedFiles = useAppStore(s => s.setUploadedFiles);
   const activeToolId = useAppStore(s => s.activeToolId);
   const setActiveToolId = useAppStore(s => s.setActiveToolId);
+  const toolOptions = useAppStore(s => s.toolOptions);
+  const clearToolOptions = useAppStore(s => s.clearToolOptions);
   const setProcessing = useAppStore(s => s.setProcessing);
   const processingState = useAppStore(s => s.processingState);
   const hasFiles = files.length > 0;
@@ -73,10 +75,11 @@ export function PdfToolTemplate({ toolId }: PdfToolTemplateProps) {
     // Clear stale files when navigating between different tool pages.
     if (activeToolId && activeToolId !== toolId) {
       setUploadedFiles([]);
+      clearToolOptions(activeToolId);
       setResultUrl(null);
     }
     setActiveToolId(toolId);
-  }, [activeToolId, setActiveToolId, setUploadedFiles, toolId]);
+  }, [activeToolId, clearToolOptions, setActiveToolId, setUploadedFiles, toolId]);
 
   const sourceFormatLabel = useMemo(() => {
     const firstExt = Object.values(tool.accept).flat()[0];
@@ -196,9 +199,33 @@ export function PdfToolTemplate({ toolId }: PdfToolTemplateProps) {
       formData.append("backgroundColor", backgroundColor);
     }
     formData.append("mergeAll", String(mergeAll));
+    const opts = toolOptions[toolId] ?? {};
+    for (const [key, value] of Object.entries(opts)) {
+      if (value !== undefined && value !== null && value !== "") {
+        formData.append(key, String(value));
+      }
+    }
     if (toolId === "ocr") {
       formData.append("language", ocrLanguage);
       formData.append("output_format", ocrSearchable ? "searchable_pdf" : "txt");
+    }
+    if (toolId === "rotate" && !opts.degrees) {
+      formData.append("degrees", "90");
+    }
+    if (toolId === "compress" && !opts.quality) {
+      formData.append("quality", "ebook");
+    }
+    if (toolId === "split" && !opts.ranges) {
+      formData.append("ranges", "1-1");
+    }
+    if (toolId === "page-numbers") {
+      if (!opts.position) formData.append("position", "bottom-right");
+      if (!opts.start) formData.append("start", "1");
+      if (!opts.font_size) formData.append("font_size", "12");
+    }
+    if (toolId === "watermark") {
+      if (!opts.text) formData.append("text", "CONFIDENTIAL");
+      if (!opts.opacity) formData.append("opacity", "0.2");
     }
 
     const startTime = Date.now();
@@ -503,6 +530,7 @@ export function PdfToolTemplate({ toolId }: PdfToolTemplateProps) {
                           document.body.removeChild(link);
                           URL.revokeObjectURL(objectUrl);
                           setUploadedFiles([]);
+                          clearToolOptions(toolId);
                           setResultUrl(null);
                         } catch (e) {
                           toast.error("Download failed. Please try again.");

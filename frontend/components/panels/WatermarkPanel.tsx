@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { useAppStore } from "@/lib/store";
 
 export function WatermarkPanel() {
+  const setToolOption = useAppStore(s => s.setToolOption);
   const [text, setText] = useState("");
   const [opacity, setOpacity] = useState(40);
   const [rotation, setRotation] = useState(0);
@@ -17,7 +19,11 @@ export function WatermarkPanel() {
           <label className="mb-1 block text-slate-700">Text</label>
           <input
             value={text}
-            onChange={e => setText(e.target.value)}
+            onChange={e => {
+              const value = e.target.value;
+              setText(value);
+              setToolOption("watermark", "text", value || "CONFIDENTIAL");
+            }}
             placeholder="Confidential"
             className="w-full rounded-lg border border-slate-200 px-3 py-2 text-xs outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-200"
           />
@@ -29,7 +35,11 @@ export function WatermarkPanel() {
             min={10}
             max={100}
             value={opacity}
-            onChange={e => setOpacity(Number(e.target.value))}
+            onChange={e => {
+              const value = Number(e.target.value);
+              setOpacity(value);
+              setToolOption("watermark", "opacity", value / 100);
+            }}
             className="w-full"
           />
         </div>

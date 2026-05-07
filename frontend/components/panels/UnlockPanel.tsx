@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { useAppStore } from "@/lib/store";
 
 export function UnlockPanel() {
+  const setToolOption = useAppStore(s => s.setToolOption);
   const [password, setPassword] = useState("");
 
   return (
@@ -14,7 +16,11 @@ export function UnlockPanel() {
         <input
           type="password"
           value={password}
-          onChange={e => setPassword(e.target.value)}
+          onChange={e => {
+            const value = e.target.value;
+            setPassword(value);
+            setToolOption("unlock", "password", value);
+          }}
           className="w-full rounded-lg border border-slate-200 px-3 py-2 text-xs outline-none focus:border-sky-400 focus:ring-1 focus:ring-sky-200"
         />
       </div>

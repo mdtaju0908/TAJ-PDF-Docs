@@ -70,7 +70,7 @@ def word_to_pdf_lo(docx_path: str, timeout_seconds: int = 180) -> str:
 async def run(files: List[UploadFile], options: Optional[dict] = None) -> str:
     paths: List[str] = []
     try:
-        paths = await save_upload_files(files, allowed_exts=[".docx"])
+        paths = await save_upload_files(files, allowed_exts=[".doc", ".docx"])
         return word_to_pdf_lo(paths[0])
     finally:
         for p in paths[1:]:

@@ -64,7 +64,7 @@ async def word_to_pdf_endpoint(
     chosen: Optional[UploadFile] = file if file is not None else (files[0] if files else None)
     if chosen is None:
         raise HTTPException(status_code=400, detail="No file provided")
-    paths = await save_upload_files([chosen], allowed_exts=[".docx"])
+    paths = await save_upload_files([chosen], allowed_exts=[".doc", ".docx"])
     out_id = await asyncio.to_thread(word_to_pdf_lo, paths[0])
     if settings.AWS_S3_BUCKET:
         file_path = resolve_download_path(out_id)

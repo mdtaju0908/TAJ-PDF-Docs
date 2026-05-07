@@ -8,6 +8,7 @@ from app.core.config import settings
 
 # Temp directory for storing operation results
 TMP_DIR = settings.TMP_DIR
+CHUNK_SIZE = 1024 * 1024  # 1 MB
 
 
 def secure_filename(filename: str) -> str:
@@ -22,6 +23,7 @@ async def save_upload_files(
 ) -> List[str]:
     # Saves uploaded files to temp directory after validating extension
     saved_paths: List[str] = []
+    max_size_bytes = settings.MAX_UPLOAD_SIZE_MB * 1024 * 1024
     for f in files:
         if f.filename is None:
             raise HTTPException(status_code=400, detail="File must have a filename")
@@ -32,9 +34,21 @@ async def save_upload_files(
         safe_name = secure_filename(f.filename)
         dest_name = f"{fid}_{safe_name}"
         dest_path = os.path.join(TMP_DIR, dest_name)
-        chunk = await f.read()
+        total_bytes = 0
         with open(dest_path, "wb") as out:
-            out.write(chunk)
+            while True:
+                chunk = await f.read(CHUNK_SIZE)
+                if not chunk:
+                    break
+                total_bytes += len(chunk)
+                if total_bytes > max_size_bytes:
+                    os.remove(dest_path)
+                    raise HTTPException(
+                        status_code=413,
+                        detail=f"File too large. Max allowed size is {settings.MAX_UPLOAD_SIZE_MB}MB",
+                    )
+                out.write(chunk)
+        await f.seek(0)
         saved_paths.append(dest_path)
     return saved_paths
 

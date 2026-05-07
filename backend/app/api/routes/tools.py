@@ -52,7 +52,7 @@ ALLOWED_TOOLS = {
     "split": [".pdf"],
     "compress": [".pdf"],
     "pdf-to-word": [".pdf"],
-    "word-to-pdf": [".docx"],
+    "word-to-pdf": [".doc", ".docx"],
     "jpg-to-pdf": [".jpg", ".jpeg", ".png"],
     "pdf-to-jpg": [".pdf"],
     "rotate": [".pdf"],

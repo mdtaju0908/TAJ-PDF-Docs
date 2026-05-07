@@ -228,8 +228,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
     icon: "FileSpreadsheet",
     color: "bg-emerald-100 text-emerald-600",
     accept: {
-      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [".xlsx"],
-      "application/vnd.ms-excel": [".xls"]
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [".xlsx"]
     },
     buttonText: "Convert to PDF",
     gradient: "from-green-500 to-emerald-500",

@@ -12,7 +12,6 @@ from app.utils.s3_client import upload_file as s3_upload_file, generate_signed_u
 router = APIRouter()
 
 
-@router.post("/split")
 def _split_opts(ranges: str = Form("1-1")) -> SplitOptions:
     return SplitOptions(ranges=ranges)
 

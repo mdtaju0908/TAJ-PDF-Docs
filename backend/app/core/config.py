@@ -12,9 +12,9 @@ class Settings(BaseModel):
     API_KEYS: List[str] = []
     ALLOWED_ORIGINS: List[str] = ["https://taj-pdf-docs.vercel.app"]
     RATE_LIMIT_REQUESTS_PER_MINUTE: int = 60
+    MAX_UPLOAD_SIZE_MB: int = 50
     TMP_DIR: str = os.path.join(
         os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
-        "backend",
         "tmp",
     )
     AWS_REGION: str = os.getenv("AWS_REGION", "us-east-1")
@@ -47,11 +47,11 @@ settings = Settings(
     API_KEYS=_get_env_list("API_KEYS", []),
     ALLOWED_ORIGINS=_get_env_list("ALLOWED_ORIGINS", ["https://taj-pdf-docs.vercel.app"]),
     RATE_LIMIT_REQUESTS_PER_MINUTE=int(os.getenv("RATE_LIMIT_REQUESTS_PER_MINUTE", "60")),
+    MAX_UPLOAD_SIZE_MB=int(os.getenv("MAX_UPLOAD_SIZE_MB", "50")),
     TMP_DIR=os.getenv(
         "TMP_DIR",
         os.path.join(
             os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
-            "backend",
             "tmp",
         ),
     ),
