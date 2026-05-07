@@ -22,6 +22,7 @@ export type PdfToolId =
   | "watermark"
   | "rotate"
   | "html-to-pdf"
+  | "markdown-convert"
   | "unlock"
   | "protect"
   | "organize"
@@ -313,20 +314,20 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
     title: "PDF to JPG",
     description: "Export each PDF page as a sharp JPG image file.",
     actionLabel: "Convert to JPG",
-    accentColor: "bg-yellow-500",
+    accentColor: "bg-amber-500",
     icon: "FileImage",
-    color: "bg-yellow-100 text-yellow-600",
+    color: "bg-amber-100 text-amber-700",
     accept: {
       "application/pdf": [".pdf"]
     },
     buttonText: "Convert to JPG",
-    gradient: "from-yellow-500 to-amber-500",
-    borderColor: "border-yellow-300",
-    bgLight: "bg-yellow-50",
-    cardColor: "bg-yellow-50",
-    cardBg: "bg-yellow-50/50",
-    iconBg: "bg-yellow-100",
-    iconColor: "text-yellow-600"
+    gradient: "from-amber-500 to-orange-500",
+    borderColor: "border-amber-300",
+    bgLight: "bg-amber-50",
+    cardColor: "bg-amber-50",
+    cardBg: "bg-amber-50/50",
+    iconBg: "bg-amber-100",
+    iconColor: "text-amber-700"
   },
   {
     id: "sign",
@@ -353,20 +354,20 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
     title: "Repair PDF",
     description: "Recover damaged or corrupted PDF files automatically.",
     actionLabel: "Repair PDF",
-    accentColor: "bg-teal-500",
+    accentColor: "bg-emerald-500",
     icon: "Wrench",
-    color: "bg-teal-100 text-teal-600",
+    color: "bg-emerald-100 text-emerald-700",
     accept: {
       "application/pdf": [".pdf"]
     },
     buttonText: "Repair PDF",
-    gradient: "from-teal-500 to-emerald-500",
-    borderColor: "border-teal-300",
-    bgLight: "bg-teal-50",
-    cardColor: "bg-teal-50",
-    cardBg: "bg-teal-50/50",
-    iconBg: "bg-teal-100",
-    iconColor: "text-teal-600"
+    gradient: "from-emerald-500 to-green-500",
+    borderColor: "border-emerald-300",
+    bgLight: "bg-emerald-50",
+    cardColor: "bg-emerald-50",
+    cardBg: "bg-emerald-50/50",
+    iconBg: "bg-emerald-100",
+    iconColor: "text-emerald-700"
   },
   {
     id: "page-numbers",
@@ -439,60 +440,60 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
     title: "Compare PDF",
     description: "Highlight differences between two PDF versions side by side.",
     actionLabel: "Compare PDFs",
-    accentColor: "bg-slate-600",
+    accentColor: "bg-indigo-600",
     icon: "Eye",
-    color: "bg-slate-100 text-slate-700",
+    color: "bg-indigo-100 text-indigo-700",
     accept: {
       "application/pdf": [".pdf"]
     },
     buttonText: "Compare PDFs",
-    gradient: "from-slate-600 to-gray-500",
-    borderColor: "border-slate-300",
-    bgLight: "bg-slate-50",
-    cardColor: "bg-slate-50",
-    cardBg: "bg-slate-50/50",
-    iconBg: "bg-slate-100",
-    iconColor: "text-slate-700"
+    gradient: "from-indigo-600 to-blue-600",
+    borderColor: "border-indigo-300",
+    bgLight: "bg-indigo-50",
+    cardColor: "bg-indigo-50",
+    cardBg: "bg-indigo-50/50",
+    iconBg: "bg-indigo-100",
+    iconColor: "text-indigo-700"
   },
   {
     id: "redact",
     title: "Redact PDF",
     description: "Permanently remove sensitive text and graphics from PDFs.",
     actionLabel: "Redact PDF",
-    accentColor: "bg-zinc-800",
+    accentColor: "bg-rose-600",
     icon: "ShieldOff",
-    color: "bg-zinc-100 text-zinc-900",
+    color: "bg-rose-100 text-rose-700",
     accept: {
       "application/pdf": [".pdf"]
     },
     buttonText: "Redact PDF",
-    gradient: "from-zinc-800 to-zinc-600",
-    borderColor: "border-zinc-400",
-    bgLight: "bg-zinc-50",
-    cardColor: "bg-zinc-50",
-    cardBg: "bg-zinc-50/50",
-    iconBg: "bg-zinc-100",
-    iconColor: "text-zinc-900"
+    gradient: "from-rose-600 to-red-600",
+    borderColor: "border-rose-300",
+    bgLight: "bg-rose-50",
+    cardColor: "bg-rose-50",
+    cardBg: "bg-rose-50/50",
+    iconBg: "bg-rose-100",
+    iconColor: "text-rose-700"
   },
   {
     id: "crop",
     title: "Crop PDF",
     description: "Trim margins or focus on specific areas within each page.",
     actionLabel: "Crop PDF",
-    accentColor: "bg-lime-500",
+    accentColor: "bg-green-600",
     icon: "Crop",
-    color: "bg-lime-100 text-lime-600",
+    color: "bg-green-100 text-green-700",
     accept: {
       "application/pdf": [".pdf"]
     },
     buttonText: "Crop PDF",
-    gradient: "from-lime-500 to-yellow-500",
-    borderColor: "border-lime-300",
-    bgLight: "bg-lime-50",
-    cardColor: "bg-lime-50",
-    cardBg: "bg-lime-50/50",
-    iconBg: "bg-lime-100",
-    iconColor: "text-lime-600"
+    gradient: "from-green-600 to-lime-500",
+    borderColor: "border-green-300",
+    bgLight: "bg-green-50",
+    cardColor: "bg-green-50",
+    cardBg: "bg-green-50/50",
+    iconBg: "bg-green-100",
+    iconColor: "text-green-700"
   },
   {
     id: "watermark",
@@ -557,46 +558,68 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
     iconColor: "text-sky-700"
   },
   {
+    id: "markdown-convert",
+    title: "Markdown Converter",
+    description: "Convert Markdown files to PDF, DOC, or DOCX from one place.",
+    actionLabel: "Convert Markdown",
+    accentColor: "bg-indigo-600",
+    icon: "FileText",
+    color: "bg-indigo-100 text-indigo-700",
+    accept: {
+      "text/markdown": [".md"],
+      "text/plain": [".md"]
+    },
+    buttonText: "Convert Markdown",
+    gradient: "from-indigo-600 to-blue-600",
+    borderColor: "border-indigo-300",
+    bgLight: "bg-indigo-50",
+    cardColor: "bg-indigo-50",
+    outputType: "pdf",
+    cardBg: "bg-indigo-50/50",
+    iconBg: "bg-indigo-100",
+    iconColor: "text-indigo-700"
+  },
+  {
     id: "unlock",
     title: "Unlock PDF",
     description: "Remove password protection from PDFs you own.",
     actionLabel: "Unlock PDF",
-    accentColor: "bg-slate-800",
+    accentColor: "bg-cyan-600",
     icon: "Unlock",
-    color: "bg-slate-100 text-slate-900",
+    color: "bg-cyan-100 text-cyan-700",
     accept: {
       "application/pdf": [".pdf"]
     },
     buttonText: "Unlock PDF",
-    gradient: "from-slate-800 to-slate-600",
-    borderColor: "border-slate-400",
-    bgLight: "bg-slate-50",
-    cardColor: "bg-slate-50",
+    gradient: "from-cyan-600 to-sky-600",
+    borderColor: "border-cyan-300",
+    bgLight: "bg-cyan-50",
+    cardColor: "bg-cyan-50",
     panelType: "unlock",
-    cardBg: "bg-slate-50/50",
-    iconBg: "bg-slate-100",
-    iconColor: "text-slate-900"
+    cardBg: "bg-cyan-50/50",
+    iconBg: "bg-cyan-100",
+    iconColor: "text-cyan-700"
   },
   {
     id: "protect",
     title: "Protect PDF",
     description: "Encrypt PDFs with strong passwords and access control.",
     actionLabel: "Protect PDF",
-    accentColor: "bg-slate-900",
+    accentColor: "bg-violet-700",
     icon: "Lock",
-    color: "bg-slate-100 text-slate-900",
+    color: "bg-violet-100 text-violet-700",
     accept: {
       "application/pdf": [".pdf"]
     },
     buttonText: "Protect PDF",
-    gradient: "from-slate-900 to-slate-700",
-    borderColor: "border-slate-500",
-    bgLight: "bg-slate-50",
-    cardColor: "bg-slate-50",
+    gradient: "from-violet-700 to-purple-700",
+    borderColor: "border-violet-300",
+    bgLight: "bg-violet-50",
+    cardColor: "bg-violet-50",
     panelType: "protect",
-    cardBg: "bg-slate-50/50",
-    iconBg: "bg-slate-100",
-    iconColor: "text-slate-900"
+    cardBg: "bg-violet-50/50",
+    iconBg: "bg-violet-100",
+    iconColor: "text-violet-700"
   },
   {
     id: "organize",

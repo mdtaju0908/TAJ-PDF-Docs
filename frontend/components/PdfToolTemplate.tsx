@@ -56,6 +56,7 @@ export function PdfToolTemplate({ toolId }: PdfToolTemplateProps) {
   const [backgroundColor, setBackgroundColor] = useState("#ffffff");
   const [ocrLanguage, setOcrLanguage] = useState("eng");
   const [ocrSearchable, setOcrSearchable] = useState(true);
+  const [markdownOutput, setMarkdownOutput] = useState<"pdf" | "doc" | "docx">("pdf");
   const [isDownloading, setIsDownloading] = useState(false);
   const { startChunkedUpload } = useChunkedUpload();
   const mergeAll = toolId === "merge";
@@ -104,6 +105,7 @@ export function PdfToolTemplate({ toolId }: PdfToolTemplateProps) {
   }, [tool.title]);
 
   const targetFormatLabel = useMemo(() => {
+    if (toolId === "markdown-convert") return markdownOutput.toUpperCase();
     if (tool.outputType) return tool.outputType.toUpperCase();
     if (targetFromTitle) return targetFromTitle;
     if (tool.title.toLowerCase().includes(" to ") && tool.title.toLowerCase().includes("pdf")) return "PDF";
@@ -111,7 +113,7 @@ export function PdfToolTemplate({ toolId }: PdfToolTemplateProps) {
       return tool.extensionLabel.toUpperCase();
     }
     return "PDF";
-  }, [targetFromTitle, tool.extensionLabel, tool.outputType, tool.title]);
+  }, [markdownOutput, targetFromTitle, tool.extensionLabel, tool.outputType, tool.title, toolId]);
 
   const sourcePrompt = useMemo(() => {
     return sourceFormatLabel === "FILE" ? "file" : sourceFormatLabel;
@@ -130,6 +132,7 @@ export function PdfToolTemplate({ toolId }: PdfToolTemplateProps) {
   const outputExt = useMemo(() => {
     if (toolId === "pdf-to-jpg") return "zip";
     if (toolId === "ocr") return ocrSearchable ? "pdf" : "txt";
+    if (toolId === "markdown-convert") return markdownOutput;
     if (tool.outputType) return tool.outputType.toLowerCase();
     if (targetFormatLabel.toLowerCase().includes("pdf")) return "pdf";
     if (targetFormatLabel.toLowerCase().includes("ppt")) return "pptx";
@@ -138,7 +141,7 @@ export function PdfToolTemplate({ toolId }: PdfToolTemplateProps) {
     if (targetFormatLabel.toLowerCase().includes("jpg") || targetFormatLabel.toLowerCase().includes("jpeg")) return "jpg";
     if (targetFormatLabel.toLowerCase().includes("png")) return "png";
     return "pdf";
-  }, [ocrSearchable, targetFormatLabel, tool.outputType, toolId]);
+  }, [markdownOutput, ocrSearchable, targetFormatLabel, tool.outputType, toolId]);
 
   function buildDownloadName() {
     const firstName = files[0]?.name ?? "result";
@@ -208,6 +211,9 @@ export function PdfToolTemplate({ toolId }: PdfToolTemplateProps) {
     if (toolId === "ocr") {
       requestOptions.language = ocrLanguage;
       requestOptions.output_format = ocrSearchable ? "searchable_pdf" : "txt";
+    }
+    if (toolId === "markdown-convert") {
+      requestOptions.output_format = markdownOutput;
     }
     if (toolId === "rotate" && !opts.degrees) {
       requestOptions.degrees = 90;
@@ -450,6 +456,20 @@ export function PdfToolTemplate({ toolId }: PdfToolTemplateProps) {
                     </div>
                   </div>
                 )}
+                {toolId === "markdown-convert" && (
+                  <div className="hidden space-y-2 text-xs sm:block">
+                    <h4 className="font-medium text-slate-800 dark:text-slate-200">Output format</h4>
+                    <select
+                      className="w-full rounded-lg border border-slate-200 p-2 text-xs outline-none focus:border-indigo-400 focus:ring-1 focus:ring-indigo-200 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-300 dark:focus:border-indigo-800"
+                      value={markdownOutput}
+                      onChange={e => setMarkdownOutput(e.target.value as "pdf" | "doc" | "docx")}
+                    >
+                      <option value="pdf">PDF</option>
+                      <option value="doc">DOC</option>
+                      <option value="docx">DOCX</option>
+                    </select>
+                  </div>
+                )}
                 <div className="pt-1">
                   {!resultUrl && (
                     <button
@@ -466,7 +486,9 @@ export function PdfToolTemplate({ toolId }: PdfToolTemplateProps) {
                         ? "Processing..."
                         : toolId === "ocr"
                           ? `Convert to ${ocrSearchable ? "PDF" : "TXT"}`
-                          : `Convert to ${tool.outputType?.toUpperCase() ?? "PDF"}`}
+                          : toolId === "markdown-convert"
+                            ? `Convert to ${markdownOutput.toUpperCase()}`
+                            : `Convert to ${tool.outputType?.toUpperCase() ?? "PDF"}`}
                     </button>
                   )}
                   {resultUrl && (

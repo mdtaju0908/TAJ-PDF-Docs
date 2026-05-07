@@ -40,6 +40,10 @@ from app.services.ppt_to_pdf_service import run as ppt_to_pdf_service
 from app.services.pdf_to_excel_service import run as pdf_to_excel_service
 from app.services.excel_to_pdf_service import run as excel_to_pdf_service
 from app.services.html_to_pdf_service import run as html_to_pdf_service
+from app.services.markdown_convert_service import run as markdown_convert_service
+from app.services.markdown_convert_service import run_pdf as markdown_to_pdf_service
+from app.services.markdown_convert_service import run_doc as markdown_to_doc_service
+from app.services.markdown_convert_service import run_docx as markdown_to_docx_service
 from app.services.organize_pdf_service import run as organize_pdf_service
 from app.services.scan_to_pdf_service import run as scan_to_pdf_service
 from app.services.repair_pdf_service import run as repair_pdf_service
@@ -76,6 +80,7 @@ ALLOWED_EXTENSIONS = {
     ".xlsx",
     ".html",
     ".htm",
+    ".md",
 }
 
 TOOL_ALIASES = {
@@ -98,6 +103,10 @@ TOOL_MAP = {
     "pdf-to-excel": pdf_to_excel_service,
     "excel-to-pdf": excel_to_pdf_service,
     "html-to-pdf": html_to_pdf_service,
+    "markdown-convert": markdown_convert_service,
+    "markdown-to-pdf": markdown_to_pdf_service,
+    "markdown-to-doc": markdown_to_doc_service,
+    "markdown-to-docx": markdown_to_docx_service,
     "organize-pdf": organize_pdf_service,
     "scan-to-pdf": scan_to_pdf_service,
     "repair-pdf": repair_pdf_service,

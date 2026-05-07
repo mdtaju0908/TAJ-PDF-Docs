@@ -1,8 +1,13 @@
+ "use client";
+
+import { useState } from "react";
+import { Search } from "lucide-react";
 import { ToolGrid } from "@/components/ToolCard";
 import { UploadBox } from "@/components/UploadBox";
-import { Button } from "@/components/ui/button";
 
 export default function HomePage() {
+  const [searchTerm, setSearchTerm] = useState("");
+
   return (
     <div className="hero-gradient">
       <section className="flex w-full flex-col gap-12 px-4 pb-14 pt-12 md:flex-row md:items-center md:px-6 lg:px-10 lg:pb-20 lg:pt-16">
@@ -24,18 +29,19 @@ export default function HomePage() {
               Merge, split, compress, and convert documents in seconds. TAJ PDF Docs gives
               you a clean, secure workspace for everyday file management.
             </p>
-          </div>
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
-            <a href="#upload">
-              <Button
-                size="lg"
-                className="h-12 rounded-xl bg-gradient-to-r from-rose-500 to-orange-500 px-7 text-base font-semibold text-white shadow-lg shadow-rose-500/25 transition hover:scale-[1.02] hover:from-rose-600 hover:to-orange-600"
-              > Select PDF Document
-              </Button>
-            </a>
+            <div className="relative max-w-xl">
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={e => setSearchTerm(e.target.value)}
+                placeholder="Search tools and features..."
+                className="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-10 pr-3 text-sm text-slate-700 outline-none transition focus:border-indigo-400 focus:ring-1 focus:ring-indigo-300 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200 dark:focus:border-indigo-700 dark:focus:ring-indigo-800"
+              />
+            </div>
           </div>
         </div>
-        <div className="flex-1">
+        <div className="hidden md:block md:flex-1">
           <div
             id="upload"
             className="rounded-[30px] border border-slate-200 bg-white/95 p-5 shadow-[0_28px_70px_-32px_rgba(15,23,42,0.35)] dark:border-slate-800 dark:bg-slate-900/95 dark:shadow-[0_28px_70px_-32px_rgba(0,0,0,0.5)]"
@@ -84,7 +90,7 @@ export default function HomePage() {
             </p>
           </div>
         </div>
-        <ToolGrid />
+        <ToolGrid searchTerm={searchTerm} onSearchTermChange={setSearchTerm} showSearch={false} />
       </section>
 
       <section className="mx-auto max-w-6xl space-y-6 px-4 pb-16 md:px-6 lg:px-8">
